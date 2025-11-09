@@ -7,6 +7,7 @@
 \usepackage{fontspec}
 \setmainfont{Times New Roman}
 
+\usepackage{amsmath}
 \usepackage{graphicx,float,booktabs,array,multirow,url}
 \usepackage{gensymb}
 \usepackage[british]{babel}
@@ -107,6 +108,34 @@ The main objective of the coursework is to search algorithms and automated plann
 %----------------------------------------------------------------------------------------
 \subsection{Part 1 - Solving and Analyzing Sudoku with Search Algorithms}
 \subsubsection{Part 1A}
+\textbf{Solution:} \\
+A CSP(constraint satisfaction problem) should involves the following three components: Variables, Domains and Constraints.
+Therefore, we can define the Sudoku problem as follows:
+\[
+\text{Sudoku} = \langle V, D, C \rangle
+\]
+where
+\[
+\begin{array}{rl p{8cm}}
+V &= \{V_{i,j} \mid i,j \in \{1,2,\ldots,9\}\}, 
+  & variables representing each cell in the 9×9 grid; \\[0.4em]
+D &= \{D_{i,j} = \{1,2,\ldots,9\} \mid i,j \in \{1,2,\ldots,9\}\}, 
+  & domains of possible values for each cell; \\[0.4em]
+C &= \{C_k \mid k \in \{1,2,\ldots,27\}\}, 
+  & constraints enforcing unique values per row, column, and 3×3 box.
+\end{array}
+\]
+
+\textbf{Time Complexity Analysis:}
+\begin{itemize}
+    \item Brute-force Search Algorithm: \\
+    For each of the $k$ spaces, there are 9 possible choices of numbers. This results in a total of $9 \times 9 \times \ldots \times 9$ (k times) combinations.
+    Therefore, the time complexity of the brute-force search algorithm is $O(9^k)$.
+    When the worst-case scenario occurs, the algorithm needs to explore all possible combinations, leading to the $O(9^{81})$ time complexity.
+    \item Backtracking Search Algorithm: \\
+    
+\end{itemize}
+
 \subsubsection{Part 1B}
 
 \subsection{Part 2 - Automated Planning}
