@@ -1,0 +1,129 @@
+\documentclass[12pt,a4paper]{article}
+
+%----------------------------------------------------------------------------------------
+% PACKAGES
+%----------------------------------------------------------------------------------------
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+\usepackage{graphicx,float,booktabs,array,multirow,url}
+\usepackage{gensymb}
+\usepackage[british]{babel}
+\usepackage[square,numbers,sort&compress]{natbib}
+\usepackage{caption,subcaption}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.9}
+
+\usepackage[colorlinks=true,
+            linkcolor=blue,
+            citecolor=blue,
+            urlcolor=blue]{hyperref}
+
+\usepackage{minted}
+
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\addtolength{\topmargin}{-2.5pt}
+
+\usepackage{silence}
+\WarningFilter{gensymb}{Not defining}
+
+%----------------------------------------------------------------------------------------
+% CUSTOM ABSTRACT FORMAT
+%----------------------------------------------------------------------------------------
+\makeatletter
+\renewenvironment{abstract}{
+    \begin{center}
+        \large\bfseries \abstractname
+    \end{center}
+    \begin{quote}\small
+}{
+    \end{quote}
+}
+\makeatother
+
+%----------------------------------------------------------------------------------------
+% USER INFORMATION
+%----------------------------------------------------------------------------------------
+\newcommand{\studentonename}{Keqin ZHANG}
+\newcommand{\studenttwoname}{Yuwei ZHAO}
+\newcommand{\studentonenumber}{H00460395}
+\newcommand{\studenttwonumber}{H00460398}
+\newcommand{\labgroup}{OUC CW1 33}
+\newcommand{\labdate}{2025-11-10}
+\newcommand{\course}{F29AI - Artificial Intelligence}
+\newcommand{\labtitle}{Coursework1 Report}
+
+%----------------------------------------------------------------------------------------
+% TITLE
+%----------------------------------------------------------------------------------------
+\title{
+    \vspace{-1cm}
+    \textbf{\labtitle}\\[0.3em]
+    \Large \course
+}
+\author{
+    \studentonename~(\studentonenumber)
+    \quad
+    \studenttwoname~(\studenttwonumber) \\[0.5em]
+    \labgroup \quad \labdate
+}
+\date{}
+
+%----------------------------------------------------------------------------------------
+% PAGE STYLE
+%----------------------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\labtitle}
+\fancyhead[R]{\labgroup}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.75em}
+
+%----------------------------------------------------------------------------------------
+% DOCUMENT BODY
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+\maketitle
+
+%----------------------------------------------------------------------------------------
+\begin{abstract}
+This report involves the solutions to the tasks outlined in Coursework 1 for the \textit{F29AI - Artificial Intelligence course}.
+The main objective of the coursework is to search algorithms and automated planning using $PDDL$.
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+\section{Introduction}
+
+
+%----------------------------------------------------------------------------------------
+\section{Procedure}
+%----------------------------------------------------------------------------------------
+\subsection{Part 1 - Solving and Analyzing Sudoku with Search Algorithms}
+\subsubsection{Part 1A}
+\subsubsection{Part 1B}
+
+\subsection{Part 2 - Automated Planning}
+\subsubsection{Part 2A: Modelling the Domain}
+\subsubsection{Part 2B: Modelling the Problems}
+\subsubsection{Part 2C: Extension}
+
+%----------------------------------------------------------------------------------------
+\section{Reflection and Analysis}
+
+%----------------------------------------------------------------------------------------
+\section{Conclusion}
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+% Source Code
+%----------------------------------------------------------------------------------------
+
+\end{document}
