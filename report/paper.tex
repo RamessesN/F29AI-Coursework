@@ -108,23 +108,29 @@ The main objective of the coursework is to search algorithms and automated plann
 %----------------------------------------------------------------------------------------
 \subsection{Part 1 - Solving and Analyzing Sudoku with Search Algorithms}
 \subsubsection{Part 1A}
-\textbf{Solution:} \\
-A CSP(constraint satisfaction problem) should involves the following three components: Variables, Domains and Constraints.
+\textbf{\large Solution:} \\
+A CSP(constraint satisfaction problem) should involve the following three components: Variables, Domains and Constraints.
 Therefore, we can define the Sudoku problem as follows:
 \[
 \text{Sudoku} = \langle V, D, C \rangle
 \]
 where
-\[
-\begin{array}{rl p{8cm}}
-V &= \{V_{i,j} \mid i,j \in \{1,2,\ldots,9\}\}, 
-  & variables representing each cell in the 9×9 grid; \\[0.4em]
-D &= \{D_{i,j} = \{1,2,\ldots,9\} \mid i,j \in \{1,2,\ldots,9\}\}, 
-  & domains of possible values for each cell; \\[0.4em]
-C &= \{C_k \mid k \in \{1,2,\ldots,27\}\}, 
-  & constraints enforcing unique values per row, column, and 3×3 box.
-\end{array}
-\]
+\begin{enumerate}
+    \item $V$: The set of 81 variables, $V = \{V_{i,j} \mid i,j \in \{1, 2, \ldots, 9\}\}$.
+    
+    \item $D$: The domain $D_{i,j}$ for each variable $V_{i,j}$ is defined as:
+    \begin{itemize}
+        \item $D_{i,j} = \{k\}$, if $V_{i,j}$ is a given cell with value $k$.
+        \item $D_{i,j} = \{1, 2, \ldots, 9\}$, if $V_{i,j}$ is an empty cell.
+    \end{itemize}
+
+    \item $C$: The set of 27 "All-Different" constraints:
+    \begin{itemize}
+        \item $C_{row}$: For each row $i$, all variables $V_{i, 1}, V_{i, 2}, \ldots, V_{i, 9}$ must have different values.
+        \item $C_{col}$: For each column $j$, all variables $V_{1, j}, V_{2, j}, \ldots, V_{9, j}$ must have different values.
+        \item $C_{subgrid}$: For each $3 \times 3$ subgrid, all 9 variables within that subgrid must have different values.
+    \end{itemize}
+\end{enumerate}
 
 \textbf{Time Complexity Analysis:}
 \begin{itemize}
