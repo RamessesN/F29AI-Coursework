@@ -19,37 +19,44 @@
     ; -------------------------------
 
     (:predicates
-        ; positions
+        ; Positions
         (lander-at ?l - lander ?loc - location)
         (at ?r - rover ?loc - location)
         
-        ; --- Map connectivity
+        ; Connectivity between surface locations
         (path ?from - location ?to - location)
 
-        ; rover ownership
+        ; The association between rovers and their respective landers
         (assigned ?r - rover ?l - lander)
         
         ; Landing location
         (unplaced ?l - lander)
 
-        ; deployment status
+        ; Deployment status
         (deployed ?r - rover)
         
-        ; If lander had sample 
+        ; If lander had not carried sample 
         (lander-free ?l - lander)
         
-        ; data tasks
+        ; Data tasks
+        ; Data objectives
         (image-target ?img - image ?loc - location)
         (scan-target ?sc - scan ?loc - location)
+        ; If data has been captured
         (taken ?d - data)
+        ; If rover hold data
         (empty-memory ?r - rover)
         (holding-data ?r - rover ?d - data)
+        ; If data has been transmitted to lander
         (transmitted ?d - data ?l - lander)
         
-        ; samples
+        ; Sample tasks
+        ; Sample objectives
         (sample-at ?s - sample ?loc - location)
+        ; If rover hold sample
         (holding-sample ?r - rover ?s - sample)
-        (sample-collected ?s - sample)
+        ; Collection of sample
+        (sample-picked-up ?s - sample)
         (sample-stored ?s - sample) 
         (stored ?s - sample ?l - lander)
     )
@@ -70,7 +77,7 @@
             )
     )
 
-    ; Deploy
+    ; Deploy rover
     (:action deploy
         :parameters (?r - rover ?l - lander ?loc - location)
         :precondition (and
@@ -84,7 +91,7 @@
         )
     )
     
-    ;Retrieve
+    ;Retrieve rover
     (:action retrieve
         :parameters (?r - rover ?l - lander ?loc - location)
         :precondition (and
@@ -99,7 +106,7 @@
         )
     )
     
-    ; Move
+    ; Movement of rover
     (:action move
         :parameters (?r - rover ?from - location ?to - location)
         :precondition (and
@@ -163,17 +170,17 @@
     )
     
     ; Pick up Sample
-    (:action collect-sample
+    (:action pick-up-sample
         :parameters (?r - rover ?s - sample ?loc - location)
         :precondition (and
             (deployed ?r)
             (at ?r ?loc)
             (sample-at ?s ?loc)
-            (not (sample-collected ?s))
+            (not (sample-picked-up ?s))
         )
         :effect (and
             (holding-sample ?r ?s)
-            (sample-collected ?s)
+            (sample-picked-up ?s)
             (not (sample-at ?s ?loc))
         )
     )
