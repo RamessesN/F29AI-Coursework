@@ -54,7 +54,7 @@
 \newcommand{\labgroup}{OUC CW1 33}
 \newcommand{\labdate}{2025-11-10}
 \newcommand{\course}{F29AI - Artificial Intelligence}
-\newcommand{\labtitle}{Coursework1 Report}
+\newcommand{\labtitle}{CW1 Report}
 
 %----------------------------------------------------------------------------------------
 % TITLE
@@ -78,6 +78,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\labtitle}
+\fancyhead[C]{\course}
 \fancyhead[R]{\labgroup}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -101,14 +102,25 @@ The main objective of the coursework is to search algorithms and automated plann
 
 %----------------------------------------------------------------------------------------
 \section{Introduction}
-
+% TODO: Write the introduction section.
 
 %----------------------------------------------------------------------------------------
 \section{Procedure}
 %----------------------------------------------------------------------------------------
 \subsection{Part 1 - Solving and Analyzing Sudoku with Search Algorithms}
 \subsubsection{Part 1A}
-\textbf{\large Solution:} \\
+\textbf{< Brief Description >} \\ [0.5em]
+Assume that a \textit{Sudoku} consists of a $9 \times 9$ grid. 
+The objective is to fill the grid with digits in such a way that each row, each column, and each of the 9 principal $3 \times 3$ sub-squares contains all of the digits from 1 to 9. 
+An approach to an intelligent sudoku solver is needed.
+
+\begin{itemize}
+    \item Define Sudoku formally as a constraint satisfaction problem.
+    \item What are the variables, domains, and constraints?
+    \item Discuss the time complexity of brute-force search vs. backtracking in Sudoku.
+\end{itemize}
+
+\textbf{< Solution >} \\ [0.5em]
 A CSP(constraint satisfaction problem) should involve the following three components: Variables, Domains and Constraints.
 Therefore, we can define the Sudoku problem as follows:
 \[
@@ -126,23 +138,35 @@ where
 
     \item $C$: The set of 27 "All-Different" constraints:
     \begin{itemize}
-        \item $C_{row}$: For each row $i$, all variables $V_{i, 1}, V_{i, 2}, \ldots, V_{i, 9}$ must have different values.
-        \item $C_{col}$: For each column $j$, all variables $V_{1, j}, V_{2, j}, \ldots, V_{9, j}$ must have different values.
-        \item $C_{subgrid}$: For each $3 \times 3$ subgrid, all 9 variables within that subgrid must have different values.
+        \item $C_{\text{row}}$: For each row $i$, all variables $V_{i, 1}, V_{i, 2}, \ldots, V_{i, 9}$ must have different values.
+        \item $C_{\text{col}}$: For each column $j$, all variables $V_{1, j}, V_{2, j}, \ldots, V_{9, j}$ must have different values.
+        \item $C_{\text{subgrid}}$: For each $3 \times 3$ subgrid, all 9 variables within that subgrid must have different values.
     \end{itemize}
 \end{enumerate}
 
-\textbf{Time Complexity Analysis:}
+Time Complexity Analysis:
 \begin{itemize}
     \item Brute-force Search Algorithm: \\
     For each of the $k$ spaces, there are 9 possible choices of numbers. This results in a total of $9 \times 9 \times \ldots \times 9$ (k times) combinations.
     Therefore, the time complexity of the brute-force search algorithm is $O(9^k)$.
     When the worst-case scenario occurs, the algorithm needs to explore all possible combinations, leading to the $O(9^{81})$ time complexity.
+
     \item Backtracking Search Algorithm: \\
+    It checks the validity of constraints (row, column, and $3 \times 3$ sub-grid) \textbf{immediately} after assigning a number to a cell.
+    If a conflict is detected (i.e., the current partial solution is invalid), the algorithm recursively "backtracks" to the previous step to try a different number. 
+    This process effectively \textbf{prunes} large sub-trees of the search space that are known to be invalid.
     
+    While the theoretical worst-case time complexity remains $O(9^k)$ (similar to brute-force), the average-case performance is drastically faster. 
+    This is because the \textit{effective branching factor} $b$ becomes significantly smaller than 9 ($b \ll 9$) as the constraints restrict the number of valid choices for each subsequent cell.    
 \end{itemize}
 
 \subsubsection{Part 1B}
+\textbf{< Brief Description >} \\ [0.5em]
+Build an intelligent \textit{Sudoku} Solver.
+
+
+\textbf{< Solution >} \\ [0.5em]
+
 
 \subsection{Part 2 - Automated Planning}
 \subsubsection{Part 2A: Modelling the Domain}
