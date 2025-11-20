@@ -70,7 +70,7 @@ class SudokuMainWindow(QMainWindow):
 
         self.info_panel = QLabel("Sudoku Game")
         self.info_panel.setObjectName("info_panel")
-        self.info_panel.setFont(QFont("Arial", 20))
+        self.info_panel.setFont(QFont("Arial", 16))
 
         panel_style_path = os.path.join(base_path(), "css_styles", "panel_style.qss")
 
@@ -205,9 +205,11 @@ class SudokuMainWindow(QMainWindow):
                     cell.setText(str(val))
                     cell.set_solved_style()
 
-            metrics = (f"🕒 Time: {self.solver.execution_time:.2f} ms  |  "
-                    f"🔢 Steps: {self.solver.steps}  |  "
-                    f"🔙 Backtracks: {self.solver.backtracks}")
+            metrics = (
+                f"🕒 Time: {self.solver.execution_time:.2f} ms  |  "
+                f"🔢 Steps: {self.solver.steps}  |  "
+                f"🔙 Backtracks: {self.solver.backtracks}"
+            )
             self.info_panel.setText(metrics)
             self.solver.print_metrics()
             
