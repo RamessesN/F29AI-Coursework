@@ -1,0 +1,91 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{p}{(}\PYG{n+nb}{define}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{problem}\PYG{+w}{ }\PYG{n}{lunar\PYGZhy{}mission\PYGZhy{}2}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{(}\PYG{k}{:domain}\PYG{+w}{ }\PYG{n}{lunar}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{p}{(}\PYG{k}{:objects}
+\PYG{+w}{        }\PYG{n}{lander1}\PYG{+w}{ }\PYG{n}{lander2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{lander}
+\PYG{+w}{        }\PYG{n}{rover1}\PYG{+w}{ }\PYG{n}{rover2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{rover}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Map}
+\PYG{+w}{        }\PYG{n}{wp1}\PYG{+w}{ }\PYG{n}{wp2}\PYG{+w}{ }\PYG{n}{wp3}\PYG{+w}{ }\PYG{n}{wp4}\PYG{+w}{ }\PYG{n}{wp5}\PYG{+w}{ }\PYG{n}{wp6}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{location}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Data}
+\PYG{+w}{        }\PYG{n}{image2}\PYG{+w}{ }\PYG{n}{image3}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{image}
+\PYG{+w}{        }\PYG{n}{scan4}\PYG{+w}{ }\PYG{n}{scan6}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{scan}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Sample}
+\PYG{+w}{        }\PYG{n}{sample1}\PYG{+w}{ }\PYG{n}{sample5}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{sample}
+\PYG{+w}{        }\PYG{c+cSingleline}{; New:}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Area}
+\PYG{+w}{        }\PYG{n}{control\PYGZhy{}room}\PYG{+w}{ }\PYG{n}{docking\PYGZhy{}bay}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{area}
+\PYG{+w}{        }\PYG{c+cSingleline}{; People}
+\PYG{+w}{        }\PYG{n}{alice}\PYG{+w}{ }\PYG{n}{bob}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{astronaut}
+
+\PYG{+w}{    }\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{p}{(}\PYG{k}{:init}
+\PYG{+w}{        }\PYG{c+cSingleline}{; New:}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Crew position}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{crew\PYGZhy{}in}\PYG{+w}{ }\PYG{n}{alice}\PYG{+w}{ }\PYG{n}{lander1}\PYG{+w}{ }\PYG{n}{docking\PYGZhy{}bay}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{crew\PYGZhy{}in}\PYG{+w}{ }\PYG{n}{bob}\PYG{+w}{ }\PYG{n}{lander2}\PYG{+w}{ }\PYG{n}{control\PYGZhy{}room}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; The association between rovers and their respective landers}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{assigned}\PYG{+w}{ }\PYG{n}{rover1}\PYG{+w}{ }\PYG{n}{lander1}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{assigned}\PYG{+w}{ }\PYG{n}{rover2}\PYG{+w}{ }\PYG{n}{lander2}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; Rover initial deployment states}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Rover1 starts deployed at wp2 (with lander2)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n+nb}{not}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{unplaced}\PYG{+w}{ }\PYG{n}{lander1}\PYG{p}{))}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{lander\PYGZhy{}at}\PYG{+w}{ }\PYG{n}{lander1}\PYG{+w}{ }\PYG{n}{wp2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n+nb}{at}\PYG{+w}{ }\PYG{n}{rover1}\PYG{+w}{ }\PYG{n}{wp2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{deployed}\PYG{+w}{ }\PYG{n}{rover1}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; Initial status}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{lander\PYGZhy{}free}\PYG{+w}{ }\PYG{n}{lander1}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{empty\PYGZhy{}memory}\PYG{+w}{ }\PYG{n}{rover1}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; Rover2 starts undeployed (lander2 unplaced ( to be chosen))}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{unplaced}\PYG{+w}{ }\PYG{n}{lander2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n+nb}{not}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{deployed}\PYG{+w}{ }\PYG{n}{rover2}\PYG{p}{))}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; Initial status of 2}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{lander\PYGZhy{}free}\PYG{+w}{ }\PYG{n}{lander2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{empty\PYGZhy{}memory}\PYG{+w}{ }\PYG{n}{rover2}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; Connectivity between surface locations(Figure 3)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp1}\PYG{+w}{ }\PYG{n}{wp2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp2}\PYG{+w}{ }\PYG{n}{wp1}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp2}\PYG{+w}{ }\PYG{n}{wp3}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp3}\PYG{+w}{ }\PYG{n}{wp5}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp5}\PYG{+w}{ }\PYG{n}{wp3}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp5}\PYG{+w}{ }\PYG{n}{wp6}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp6}\PYG{+w}{ }\PYG{n}{wp4}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp2}\PYG{+w}{ }\PYG{n}{wp4}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{path}\PYG{+w}{ }\PYG{n}{wp4}\PYG{+w}{ }\PYG{n}{wp2}\PYG{p}{)}
+
+\PYG{+w}{        }\PYG{c+cSingleline}{; task objective}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Image}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{image\PYGZhy{}target}\PYG{+w}{ }\PYG{n}{image2}\PYG{+w}{ }\PYG{n}{wp2}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{image\PYGZhy{}target}\PYG{+w}{ }\PYG{n}{image3}\PYG{+w}{ }\PYG{n}{wp3}\PYG{p}{)}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Scan}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{scan\PYGZhy{}target}\PYG{+w}{ }\PYG{n}{scan4}\PYG{+w}{ }\PYG{n}{wp4}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{scan\PYGZhy{}target}\PYG{+w}{ }\PYG{n}{scan6}\PYG{+w}{ }\PYG{n}{wp6}\PYG{p}{)}
+\PYG{+w}{        }\PYG{c+cSingleline}{; Sample}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{sample\PYGZhy{}at}\PYG{+w}{ }\PYG{n}{sample1}\PYG{+w}{ }\PYG{n}{wp1}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n}{sample\PYGZhy{}at}\PYG{+w}{ }\PYG{n}{sample5}\PYG{+w}{ }\PYG{n}{wp5}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{p}{(}\PYG{k}{:goal}
+\PYG{+w}{        }\PYG{p}{(}\PYG{n+nb}{and}
+\PYG{+w}{            }\PYG{c+cSingleline}{; Indicates that image2 and image3 have been captured}
+\PYG{+w}{            }\PYG{p}{(}\PYG{n}{taken}\PYG{+w}{ }\PYG{n}{image2}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{(}\PYG{n}{taken}\PYG{+w}{ }\PYG{n}{image3}\PYG{p}{)}
+
+\PYG{+w}{            }\PYG{c+cSingleline}{; Indicates that scan4 and scan6 have been captured}
+\PYG{+w}{            }\PYG{p}{(}\PYG{n}{taken}\PYG{+w}{ }\PYG{n}{scan4}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{(}\PYG{n}{taken}\PYG{+w}{ }\PYG{n}{scan6}\PYG{p}{)}
+
+\PYG{+w}{            }\PYG{c+cSingleline}{; Indicates that sample1 and sample5 have been collected(picked up and stored)}
+\PYG{+w}{            }\PYG{p}{(}\PYG{n}{sample\PYGZhy{}stored}\PYG{+w}{ }\PYG{n}{sample1}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{(}\PYG{n}{sample\PYGZhy{}stored}\PYG{+w}{ }\PYG{n}{sample5}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{)}
+\PYG{p}{)}
+\end{MintedVerbatim}

@@ -111,6 +111,7 @@ See Resources on \href{https://github.com/ZhangKeqin0307/couresework1.git}{git@g
 %----------------------------------------------------------------------------------------
 \subsection{Part 1 - Solving and Analyzing Sudoku with Search Algorithms}
 \subsubsection{Part 1A}
+\label{subsubsection:Part_1A}
 \textbf{< Brief Description >} \\ [0.5em]
 Assume that a \textit{Sudoku} consists of a $9 \times 9$ grid. 
 The objective is to fill the grid with digits in such a way that each row, each column, and each of the 9 principal $3 \times 3$ sub-squares contains all of the digits from 1 to 9. 
@@ -162,12 +163,60 @@ Time Complexity Analysis:
     This is because the \textit{effective branching factor} $b$ becomes significantly smaller than 9 ($b \ll 9$) as the constraints restrict the number of valid choices for each subsequent cell.    
 \end{itemize}
 
+\newpage
 \subsubsection{Part 1B}
 \textbf{< Brief Description >} \\ [0.5em]
-Build an intelligent \textit{Sudoku} Solver.
-
+Build an intelligent \textit{Sudoku} solver that accepts input puzzles from \textit{.txt} or \textit{.csv} files. 
+The program displays the solved puzzle in a clean format while printing relevant performance metrics, 
+and concludes with a comparison against the \textit{A*} search algorithm.
 
 \textbf{< Solution >} \\ [0.5em]
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Language} & Python \\ \hline
+        \textbf{Solver} & Backtracking with pruning \\ \hline
+        \textbf{Input} & $9 \times 9$ CSV file (0 represents empty) \\ \hline
+        \textbf{Output} & GUI display and relevant metrics printed \\ \hline
+        \textbf{Testing} & Several \textit{Sudoku} puzzle tests \\ \hline
+    \end{tabular}
+    \caption{Preparation of Sudoku Solver Implementation}
+    \label{table:preparation_of_sudoku}
+\end{table}
+
+\hyperref[item:sudoku_solver]{\textbf{Backend Part:}}
+\begin{enumerate}
+    \item \textbf{Problem abstraction \& CSP modelling} \\
+    As stated in Part~\ref{subsubsection:Part_1A}, model the puzzle as a CSP:
+    \[
+    \textit{Sudoku} = \langle V, D, C \rangle
+    \]
+    where \(V\) is the 81 variables \(V_{i,j}\); \(D_{i,j}\) are domains and \(C\) are the row / column / $3 \times 3$ subgrid all-different constraints. 
+    
+    In code this is corresponding to:
+    \begin{itemize}
+        \item \texttt{sudoku\_solver.board} : a $9 \times 9$ integer matrix (0 means empty).
+        \item \texttt{is\_valid(row,col,num)} : enforces the three constraint types for a tentative assignment.
+    \end{itemize}
+
+    \item \textbf{Input format preset} \\
+    Implement robust input routines that accept \texttt{.csv} formatted $9 \times 9$ grids.
+    It needs to read rows with comma separation, convert each token to int, accept 0 or blank as empty.
+
+    In our code base this is the method \texttt{load\_from\_csv(filepath)}. Validate that the parsed grid has $9~\text{rows} \times 9~\text{columns}$, otherwise throw / report an error.
+
+    \item \textbf{Core solver build} \\
+    ...
+    
+\end{enumerate}
+
+\hrulefill
+
+\hyperref[item:sudoku_gui]{\textbf{Frontend Part:}}
+\begin{enumerate}
+    \item ...
+\end{enumerate}
 
 
 \subsection{Part 2 - Automated Planning}
@@ -190,7 +239,1050 @@ Build an intelligent \textit{Sudoku} Solver.
 \section{Source Code}
 \label{section:source_code}
 \begin{itemize}
-    \item 
+    \item \textbf{Part1 - \textit{sudoku\_solver.py}}
+    \label{item:sudoku_solver}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
+import csv
+import time
+
+class SudokuSolver:
+    def __init__(self):
+        self.board = []
+        # Relevant metrics
+        self.steps = 0            # Total number of steps
+        self.recursive_calls = 0  # Recursive calls
+        self.backtracks = 0       # Backtracks
+        self.start_time = 0
+        self.execution_time = 0
+
+    def load_from_csv(self, filepath):
+        self.board = []
+        try:
+            with open(filepath, 'r', encoding='UTF-8') as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    # Converts the string to an integer, handling possible whitespace
+                    index = [int(num.strip()) for num in row if num.strip().isdigit()]
+                    if len(index) == 9:
+                        self.board.append(index)
+            
+            if len(self.board) != 9:
+                raise ValueError("Invalid row count in CSV")
+            
+            print(f"[Succeed] File loaded: {filepath}")
+            return True
+        except Exception as e:
+            print(f"[Error] File loading failed: {e}")
+            return False
+
+    def is_valid(self, row, col, num):
+        # Row check
+        for x in range(9):
+            if self.board[row][x] == num:
+                return False
+
+        # Column check
+        for x in range(9):
+            if self.board[x][col] == num:
+                return False
+
+        # 3x3 box check
+        start_row = row - row % 3
+        start_col = col - col % 3
+        for i in range(3):
+            for j in range(3):
+                if self.board[i + start_row][j + start_col] == num:
+                    return False
+        
+        return True
+
+    def solve_algorithm(self):
+        self.recursive_calls += 1
+        
+        for i in range(9):
+            for j in range(9):
+                if self.board[i][j] == 0:
+                    for num in range(1, 10):
+                        self.steps += 1
+                        # If invalid, prune it
+                        if self.is_valid(i, j, num):
+                            self.board[i][j] = num
+                            
+                            if self.solve_algorithm():
+                                return True
+                            
+                            # Backtracking
+                            self.board[i][j] = 0
+                            self.backtracks += 1
+                    
+                    return False
+        return True
+
+    def run_solver(self):
+        self.steps = 0
+        self.recursive_calls = 0
+        self.backtracks = 0
+        
+        self.start_time = time.perf_counter()
+        
+        success = self.solve_algorithm()
+        
+        end_time = time.perf_counter()
+        self.execution_time = (end_time - self.start_time) * 1000
+        
+        return success
+
+    def print_metrics(self):
+        print("\n")
+        print(f"Execution Time: {self.execution_time:.4f} ms")
+        print(f"Total Steps (Attempts): {self.steps}")
+        print(f"Recursive Calls: {self.recursive_calls}")
+        print(f"Backtracks: {self.backtracks}")
+        print("\n")
+    \end{minted}
+
+    \item \textbf{Part1 - \textit{sudoku\_gui.py}}
+    \label{item:sudoku_gui}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
+import os
+import sys
+
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QWidget,     QGridLayout, 
+    QVBoxLayout,  QHBoxLayout, QPushButton, QLineEdit, 
+    QFileDialog,  QLabel,      QFrame,      QMessageBox
+)
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont, QIntValidator
+
+from utils import load_qss, base_path
+from sudoku_solver import SudokuSolver
+
+class SudokuCell(QLineEdit):
+    def __init__(self):
+        super().__init__()
+        self.setFixedSize(50, 50)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setFont(QFont("Arial", 20))
+        self.setMaxLength(1)
+        self.setValidator(QIntValidator(1, 9))
+
+        default_style_path = os.path.join(base_path(), "css_styles", "default_style.qss")
+        solved_style_path = os.path.join(base_path(), "css_styles", "solved_style.qss")
+
+        self.default_style = load_qss(default_style_path)
+        self.solved_style = load_qss(solved_style_path)
+
+        self.setStyleSheet(self.default_style)
+
+    def set_solved_style(self):
+        self.setStyleSheet(self.solved_style)
+
+    def reset_style(self):
+        self.clear()
+        self.setStyleSheet(self.default_style)
+
+
+class SudokuMainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle(None)
+        self.setFixedSize(600, 750)
+
+        self.setStyleSheet("background-color: #333333;")
+        
+        self.solver = SudokuSolver()
+        self.cells = [[None for _ in range(9)] for _ in range(9)]
+
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        self.main_layout = QVBoxLayout(central_widget) # Veritical Layout
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.main_layout.setSpacing(15)
+
+        title = QLabel("Sudoku")
+        title.setFont(QFont("Arial", 25, QFont.Weight.Bold))
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setStyleSheet("color: #DDDDDD")
+        self.main_layout.addWidget(title)
+
+        self.grid_panel()
+
+        self.info_panel = QLabel("Sudoku Game")
+        self.info_panel.setObjectName("info_panel")
+        self.info_panel.setFont(QFont("Arial", 16))
+
+        panel_style_path = os.path.join(base_path(), "css_styles", "panel_style.qss")
+
+        self.info_panel.setStyleSheet(load_qss(panel_style_path))
+        self.info_panel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.info_panel)
+
+        self.button_panel()
+
+        self.center_window()
+
+    def grid_panel(self):
+        grid_container = QWidget()
+
+        outer_layout = QGridLayout(grid_container)
+        outer_layout.setSpacing(10)
+
+        for br in range(3):
+            for bc in range(3):
+                block_frame = QFrame()
+                block_frame.setStyleSheet("background-color: #DDDDDD; border-radius: 5px;") 
+                inner_layout = QGridLayout(block_frame)
+                inner_layout.setSpacing(2)
+                inner_layout.setContentsMargins(2, 2, 2, 2)
+
+                for i in range(3):
+                    for j in range(3):
+                        global_r = br * 3 + i
+                        global_c = bc * 3 + j
+                        
+                        cell = SudokuCell()
+                        self.cells[global_r][global_c] = cell
+                        inner_layout.addWidget(cell, i, j)
+                
+                outer_layout.addWidget(block_frame, br, bc)
+
+        self.main_layout.addWidget(
+            grid_container, 
+            alignment = Qt.AlignmentFlag.AlignCenter
+        )
+
+    def button_panel(self):
+        btn_layout = QHBoxLayout()
+        
+        button_style_path = os.path.join(base_path(), "css_styles", "button_style.qss")
+
+        btn_load = QPushButton("Load CSV")
+        btn_load.setStyleSheet(load_qss(button_style_path))
+        btn_load.clicked.connect(self.load_csv)
+        
+        btn_solve = QPushButton("Solve Now")
+        btn_solve.setStyleSheet(load_qss(button_style_path))
+        btn_solve.clicked.connect(self.solve_puzzle)
+        
+        btn_clear = QPushButton("Clear")
+        btn_clear.setStyleSheet(load_qss(button_style_path))
+        btn_clear.clicked.connect(self.clear_board)
+
+        btn_layout.addWidget(btn_load)
+        btn_layout.addWidget(btn_solve)
+        btn_layout.addWidget(btn_clear)
+        
+        self.main_layout.addLayout(btn_layout)
+
+    def load_csv(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV", base_path(), "CSV Files (*.csv)")
+        if file_path:
+            success = self.solver.load_from_csv(file_path)
+            if success:
+                self.update_ui_from_solver()
+                self.info_panel.setText(f"File Loaded: {file_path.split('/')[-1]}")
+            else:
+                QMessageBox.critical(self, "Error", "File loaded failed")
+
+    def update_ui_from_solver(self):
+        for r in range(9):
+            for c in range(9):
+                val = self.solver.board[r][c]
+                cell = self.cells[r][c]
+                cell.reset_style()
+                if val != 0:
+                    cell.setText(str(val))
+                else:
+                    cell.setText("")
+
+    def sync_gui_to_backend(self):
+        current_board = []
+        for r in range(9):
+            row_data = []
+            for c in range(9):
+                text = self.cells[r][c].text()
+                if text.isdigit():
+                    row_data.append(int(text))
+                else:
+                    row_data.append(0)
+            current_board.append(row_data)
+        
+        self.solver.board = current_board
+
+    def solve_puzzle(self):
+        try:
+            self.sync_gui_to_backend()
+
+            if not self.self_check_isvalid():
+                raise ValueError("[WARNING] Contradiction appears")
+            
+            if not self.solver.run_solver():
+                raise ValueError("[ERROR] The question is fucking difficult")
+            
+            for r in range(9):
+                for c in range(9):
+                    val = self.solver.board[r][c]
+                    cell = self.cells[r][c]
+                    cell.setText(str(val))
+                    cell.set_solved_style()
+
+            metrics = (
+                f"🕒 Time: {self.solver.execution_time:.2f} ms  |  "
+                f"🔢 Steps: {self.solver.steps}  |  "
+                f"🔙 Backtracks: {self.solver.backtracks}"
+            )
+            self.info_panel.setText(metrics)
+            self.solver.print_metrics()
+            
+        except Exception as e:
+            print(e)
+            self.info_panel.setText("Try again!")
+            QMessageBox.critical(self, "Error", str(e))
+
+    def self_check_isvalid(self):
+        board = self.solver.board
+        
+        for r in range(9):
+            for c in range(9):
+                num = board[r][c]
+                if num != 0:
+                   
+                    board[r][c] = 0 
+                    if not self.solver.is_valid(r, c, num):
+                        board[r][c] = num
+                        return False
+                    board[r][c] = num
+        return True
+    
+    def center_window(self):
+        screen = QApplication.primaryScreen()
+        screen_geometry = screen.availableGeometry()
+        window_geometry = self.frameGeometry()
+        window_geometry.moveCenter(screen_geometry.center())
+        self.move(window_geometry.topLeft())
+
+    def clear_board(self):
+        self.solver.board = [[0]*9 for _ in range(9)]
+        for r in range(9):
+            for c in range(9):
+                self.cells[r][c].clear()
+                self.cells[r][c].reset_style()
+        self.info_panel.setText("Clear!")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    
+    app.setStyle("Fusion") 
+    
+    window = SudokuMainWindow()
+    window.show()
+    sys.exit(app.exec())
+    \end{minted}
+
+    \item \textbf{Part2A\&B - \textit{domain1.pddl}}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
+(define (domain lunar)
+    (:requirements :strips :typing)
+
+    ; -------------------------------
+    ; Types
+    ; -------------------------------
+    
+    (:types
+        lander
+        rover
+        location
+        sample
+        data
+        image scan - data
+    )
+
+    ; -------------------------------
+    ; Predicates
+    ; -------------------------------
+
+    (:predicates
+        ; Positions
+        (lander-at ?l - lander ?loc - location)
+        (at ?r - rover ?loc - location)
+        
+        ; Connectivity between surface locations
+        (path ?from - location ?to - location)
+
+        ; The association between rovers and their respective landers
+        (assigned ?r - rover ?l - lander)
+        
+        ; Landing location
+        (unplaced ?l - lander)
+
+        ; Deployment status
+        (deployed ?r - rover)
+        
+        ; If lander had not carried sample 
+        (lander-free ?l - lander)
+        
+        ; Data tasks
+        ; Data objectives
+        (image-target ?img - image ?loc - location)
+        (scan-target ?sc - scan ?loc - location)
+        ; If data has been captured
+        (taken ?d - data)
+        ; If rover hold data
+        (empty-memory ?r - rover)
+        (holding-data ?r - rover ?d - data)
+        ; If data has been transmitted to lander
+        (transmitted ?d - data ?l - lander)
+        
+        ; Sample tasks
+        ; Sample objectives
+        (sample-at ?s - sample ?loc - location)
+        ; If rover hold sample
+        (holding-sample ?r - rover ?s - sample)
+        ; Collection of sample
+        (sample-picked-up ?s - sample)
+        (sample-stored ?s - sample) 
+        (stored ?s - sample ?l - lander)
+    )
+
+    ; -------------------------------
+    ; Actions
+    ; -------------------------------
+    
+    ; Landing location
+    (:action choose-landing
+        :parameters (?l - lander ?wp - location)
+        :precondition
+            (and (unplaced ?l))
+        :effect
+            (and
+                (not (unplaced ?l))
+                (lander-at ?l ?wp)
+            )
+    )
+
+    ; Deploy rover
+    (:action deploy
+        :parameters (?r - rover ?l - lander ?loc - location)
+        :precondition (and
+            (assigned ?r ?l)
+            (lander-at ?l ?loc)
+            (not (deployed ?r))
+        )
+        :effect (and
+            (deployed ?r)
+            (at ?r ?loc)
+        )
+    )
+    
+    ;Retrieve rover
+    (:action retrieve
+        :parameters (?r - rover ?l - lander ?loc - location)
+        :precondition (and
+            (assigned ?r ?l)
+            (deployed ?r)
+            (at ?r ?loc)
+            (lander-at ?l ?loc)
+        )
+        :effect (and
+            (not (deployed ?r))
+            (not (at ?r ?loc))
+        )
+    )
+    
+    ; Movement of rover
+    (:action move
+        :parameters (?r - rover ?from - location ?to - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?from)
+            (path ?from ?to)
+        )
+        :effect (and
+            (at ?r ?to)
+            (not (at ?r ?from))
+        )
+    )
+
+    ; Take Image
+    (:action take-image
+        :parameters (?r - rover ?img - image ?loc - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?loc)
+            (image-target ?img ?loc)
+            (empty-memory ?r)
+            (not (taken ?img))
+        )
+        :effect (and
+            (holding-data ?r ?img)
+            (taken ?img)
+            (not (empty-memory ?r))
+        )
+    )
+
+    ; Perform Scan
+    (:action scan
+        :parameters (?r - rover ?sc - scan ?loc - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?loc)
+            (scan-target ?sc ?loc)
+            (empty-memory ?r)
+            (not (taken ?sc))
+        )
+        :effect (and
+            (holding-data ?r ?sc)
+            (taken ?sc)
+            (not (empty-memory ?r))
+        )
+    )
+    
+    ; Transmit Data to Lander
+    (:action transmit
+        :parameters (?r - rover ?d - data ?l - lander)
+        :precondition (and
+            (assigned ?r ?l)
+            (deployed ?r)
+            (holding-data ?r ?d)
+        )
+        :effect (and
+            (transmitted ?d ?l)
+            (empty-memory ?r)
+            (not (holding-data ?r ?d))
+        )
+    )
+    
+    ; Pick up Sample
+    (:action pick-up-sample
+        :parameters (?r - rover ?s - sample ?loc - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?loc)
+            (sample-at ?s ?loc)
+            (not (sample-picked-up ?s))
+        )
+        :effect (and
+            (holding-sample ?r ?s)
+            (sample-picked-up ?s)
+            (not (sample-at ?s ?loc))
+        )
+    )
+    
+    ; Store Sample in Lander
+    (:action store-sample
+        :parameters (?r - rover ?s - sample ?l - lander)
+        :precondition (and
+            (not (deployed ?r)) 
+            (holding-sample ?r ?s)
+            (assigned ?r ?l)
+            (lander-free ?l)
+        )
+        :effect (and
+            (stored ?s ?l)
+            (sample-stored ?s)
+            (not (holding-sample ?r ?s))
+            (not (lander-free ?l))
+        )
+    )
+)    
+    \end{minted}
+
+    \item \textbf{Part2A\&B - \textit{mission1.pddl}}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
+(define (problem lunar-mission-1)
+    (:domain lunar)
+
+    (:objects
+        lander1 - lander
+        rover1 - rover
+        ; Map
+        wp1 wp2 wp3 wp4 wp5 wp6 - location
+        ; Data
+        image5 - image
+        scan3 - scan
+        ; Sample
+        sample1 - sample
+    )
+
+    (:init
+        ; The association between rover1 and lander1
+        (assigned rover1 lander1)
+        
+        ; Lander1 can land at any location
+        (unplaced lander1)
+        
+        ; Rover1 has not been deployed
+        (not (deployed rover1))
+        
+        ; Lander1 has not stored sample
+        (lander-free lander1)
+        
+        ; Rover1 memory is empty
+        (empty-memory rover1)
+        
+        ; Connectivity between surface locations(Figure 2)
+        (path wp1 wp4)
+        (path wp4 wp3)
+        (path wp3 wp5)
+        (path wp5 wp1)
+        (path wp1 wp2)
+        (path wp2 wp3)
+        
+        ; task objective
+        (image-target image5 wp5)
+        (scan-target scan3 wp3)
+        (sample-at sample1 wp1)
+    )
+
+    (:goal
+        (and
+            ; Indicates that image5 has been captured
+            (taken image5)
+            
+            ; Indicates that scan3 has been captured
+            (taken scan3)
+            
+            ; Indicates that sample1 has been collected and brought back
+            (sample-stored sample1) 
+        )
+    )
+)
+    \end{minted}
+
+    \item \textbf{Part2A\&B - \textit{mission2.pddl}}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
+(define (problem lunar-mission-2)
+    (:domain lunar)
+
+    (:objects
+        lander1 lander2 - lander
+        rover1 rover2 - rover
+        ; Map
+        wp1 wp2 wp3 wp4 wp5 wp6 - location
+        ; Data
+        image2 image3 - image
+        scan4 scan6 - scan
+        ; Sample
+        sample1 sample5 - sample
+    )
+
+    (:init
+        ; The association between rovers and their respective landers
+        (assigned rover1 lander1)
+        (assigned rover2 lander2)
+
+        ; Rover initial deployment states
+        ; Rover1 starts deployed at wp2 (with lander2 at wp2)
+        (not (unplaced lander1))
+        (lander-at lander1 wp2)
+        (at rover1 wp2)
+        (deployed rover1)
+        
+        ; Initial status
+        (lander-free lander1)
+        (empty-memory rover1)
+        
+        ; Rover2 starts undeployed (lander2 unplaced ( to be chosen))
+        (unplaced lander2)
+        (not (deployed rover2))
+        
+        ; Initial status of 1
+        (lander-free lander2)
+        (empty-memory rover2)
+
+        ; Connectivity between surface locations(Figure 2)
+        (path wp1 wp2)
+        (path wp2 wp1)
+        (path wp2 wp3)
+        (path wp3 wp5)
+        (path wp5 wp3)
+        (path wp5 wp6)
+        (path wp6 wp4)
+        (path wp2 wp4)
+        (path wp4 wp2)
+
+        ; task objective
+        ; Image
+        (image-target image2 wp2)
+        (image-target image3 wp3)
+        ; Scan
+        (scan-target scan4 wp4)
+        (scan-target scan6 wp6)
+        ; Sample
+        (sample-at sample1 wp1)
+        (sample-at sample5 wp5)
+    )
+
+    (:goal
+        (and
+            ; Indicates that image2 and image3 have been captured
+            (taken image2)
+            (taken image3)
+            
+            ; Indicates that scan4 and scan6 have been captured
+            (taken scan4)
+            (taken scan6)
+
+            ; Indicates that sample1 and sample5 have been collected(picked up and stored)
+            (sample-stored sample1)
+            (sample-stored sample5)
+        )
+    )
+)
+    \end{minted}
+
+    \item \textbf{Part2C - \textit{domain2.pddl}}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
+(define (domain lunar)
+    (:requirements :strips :typing)
+
+    ; -------------------------------
+    ; Types
+    ; -------------------------------
+    
+    (:types
+        lander
+        rover
+        location
+        sample
+        data
+        image scan - data
+        ; New:
+        astronaut
+        area
+    )
+
+    ; -------------------------------
+    ; Predicates
+    ; -------------------------------
+
+    (:predicates
+        ; positions
+        (lander-at ?l - lander ?loc - location)
+        (at ?r - rover ?loc - location)
+        
+        ; Connectivity between surface locations
+        (path ?from - location ?to - location)
+
+        ; The association between rovers and their respective landers
+        (assigned ?r - rover ?l - lander)
+        
+        ; Landing location
+        (unplaced ?l - lander)
+
+        ; deployment status
+        (deployed ?r - rover)
+        
+        ; If lander had not carried sample 
+        (lander-free ?l - lander)
+        
+        ; Data tasks
+        ; Data objectives
+        (image-target ?img - image ?loc - location)
+        (scan-target ?sc - scan ?loc - location)
+        ; If data has been captured
+        (taken ?d - data)
+        ; If rover hold data
+        (empty-memory ?r - rover)
+        (holding-data ?r - rover ?d - data)
+        ; If data has been transmitted to lander
+        (transmitted ?d - data ?l - lander)
+        
+        ; Sample tasks
+        ; Sample objectives
+        (sample-at ?s - sample ?loc - location)
+        ; If rover hold sample
+        (holding-sample ?r - rover ?s - sample)
+        ; Collection of sample
+        (sample-picked-up ?s - sample)
+        (sample-stored ?s - sample) 
+        (stored ?s - sample ?l - lander)
+        
+        ; New: 
+        ; The astronaut is located in which area of the lander
+        (crew-in ?a - astronaut ?l - lander ?ar - area)
+    )
+
+    ; -------------------------------
+    ; Actions
+    ; -------------------------------
+    
+    ; New action: 
+    ; Movement of astronaut in lander
+    (:action move-crew
+        :parameters (?a - astronaut ?l - lander ?from - area ?to - area)
+        :precondition (crew-in ?a ?l ?from)
+        :effect (and
+            (crew-in ?a ?l ?to)
+            (not (crew-in ?a ?l ?from))
+        )
+    )
+    
+    ; Landing location
+    (:action choose-landing
+        :parameters (?l - lander ?wp - location)
+        :precondition
+            (and (unplaced ?l))
+        :effect
+            (and
+                (not (unplaced ?l))
+                (lander-at ?l ?wp)
+            )
+    )
+    
+    ; Deploy rover
+    (:action deploy
+        :parameters (?r - rover ?l - lander ?loc - location ?a - astronaut)
+        :precondition (and
+            (assigned ?r ?l)
+            (lander-at ?l ?loc)
+            (not (deployed ?r))
+            (crew-in ?a ?l docking-bay)
+        )
+        :effect (and
+            (deployed ?r)
+            (at ?r ?loc)
+        )
+    )
+    
+    ;Retrieve rover
+    (:action retrieve
+        :parameters (?r - rover ?l - lander ?loc - location ?a - astronaut)
+        :precondition (and
+            (assigned ?r ?l)
+            (deployed ?r)
+            (at ?r ?loc)
+            (lander-at ?l ?loc)
+            (crew-in ?a ?l docking-bay)
+        )
+        :effect (and
+            (not (deployed ?r))
+            (not (at ?r ?loc))
+        )
+    )
+    
+    ; Movement of rover
+    (:action move
+        :parameters (?r - rover ?from - location ?to - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?from)
+            (path ?from ?to)
+        )
+        :effect (and
+            (at ?r ?to)
+            (not (at ?r ?from))
+        )
+    )
+
+    ; Take Image
+    (:action take-image
+        :parameters (?r - rover ?img - image ?loc - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?loc)
+            (image-target ?img ?loc)
+            (empty-memory ?r)
+            (not (taken ?img))
+        )
+        :effect (and
+            (holding-data ?r ?img)
+            (taken ?img)
+            (not (empty-memory ?r))
+        )
+    )
+
+    ; Perform Scan
+    (:action scan
+        :parameters (?r - rover ?sc - scan ?loc - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?loc)
+            (scan-target ?sc ?loc)
+            (empty-memory ?r)
+            (not (taken ?sc))
+        )
+        :effect (and
+            (holding-data ?r ?sc)
+            (taken ?sc)
+            (not (empty-memory ?r))
+        )
+    )
+    
+    ; Transmit Data to Lander
+    (:action transmit
+        :parameters (?r - rover ?d - data ?l - lander ?a - astronaut)
+        :precondition (and
+            (assigned ?r ?l)
+            (deployed ?r)
+            (holding-data ?r ?d)
+            (crew-in ?a ?l control-room)
+        )
+        :effect (and
+            (transmitted ?d ?l)
+            (empty-memory ?r)
+            (not (holding-data ?r ?d))
+        )
+    )
+    
+    ; Pick up Sample
+    (:action pick-up-sample
+        :parameters (?r - rover ?s - sample ?loc - location)
+        :precondition (and
+            (deployed ?r)
+            (at ?r ?loc)
+            (sample-at ?s ?loc)
+            (not (sample-picked-up ?s))
+        )
+        :effect (and
+            (holding-sample ?r ?s)
+            (sample-picked-up ?s)
+            (not (sample-at ?s ?loc))
+        )
+    )
+    
+    ; Store Sample in Lander
+    (:action store-sample
+        :parameters (?r - rover ?s - sample ?l - lander ?a - astronaut)
+        :precondition (and
+            (not (deployed ?r)) 
+            (holding-sample ?r ?s)
+            (assigned ?r ?l)
+            (lander-free ?l)
+            (crew-in ?a ?l docking-bay)
+        )
+        :effect (and
+            (stored ?s ?l)
+            (sample-stored ?s)
+            (not (holding-sample ?r ?s))
+            (not (lander-free ?l))
+        )
+    )
+) 
+    \end{minted}
+
+    \item \textbf{Part2C - \textit{mission3.pddl}}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
+(define (problem lunar-mission-2)
+    (:domain lunar)
+
+    (:objects
+        lander1 lander2 - lander
+        rover1 rover2 - rover
+        ; Map
+        wp1 wp2 wp3 wp4 wp5 wp6 - location
+        ; Data
+        image2 image3 - image
+        scan4 scan6 - scan
+        ; Sample
+        sample1 sample5 - sample
+        ; New:
+        ; Area
+        control-room docking-bay - area  
+        ; People
+        alice bob - astronaut
+
+    )
+
+    (:init
+        ; New:
+        ; Crew position
+        (crew-in alice lander1 docking-bay)  
+        (crew-in bob lander2 control-room)
+        
+        ; The association between rovers and their respective landers
+        (assigned rover1 lander1)
+        (assigned rover2 lander2)
+
+        ; Rover initial deployment states
+        ; Rover1 starts deployed at wp2 (with lander2)
+        (not (unplaced lander1))
+        (lander-at lander1 wp2)
+        (at rover1 wp2)
+        (deployed rover1)
+        
+        ; Initial status
+        (lander-free lander1)
+        (empty-memory rover1)
+        
+        ; Rover2 starts undeployed (lander2 unplaced ( to be chosen))
+        (unplaced lander2)
+        (not (deployed rover2))
+        
+        ; Initial status of 2
+        (lander-free lander2)
+        (empty-memory rover2)
+
+        ; Connectivity between surface locations(Figure 3)
+        (path wp1 wp2)
+        (path wp2 wp1)
+        (path wp2 wp3)
+        (path wp3 wp5)
+        (path wp5 wp3)
+        (path wp5 wp6)
+        (path wp6 wp4)
+        (path wp2 wp4)
+        (path wp4 wp2)
+
+        ; task objective
+        ; Image
+        (image-target image2 wp2)
+        (image-target image3 wp3)
+        ; Scan
+        (scan-target scan4 wp4)
+        (scan-target scan6 wp6)
+        ; Sample
+        (sample-at sample1 wp1)
+        (sample-at sample5 wp5)
+    )
+
+    (:goal
+        (and
+            ; Indicates that image2 and image3 have been captured
+            (taken image2)
+            (taken image3)
+            
+            ; Indicates that scan4 and scan6 have been captured
+            (taken scan4)
+            (taken scan6)
+
+            ; Indicates that sample1 and sample5 have been collected(picked up and stored)
+            (sample-stored sample1)
+            (sample-stored sample5)
+        )
+    )
+)
+    \end{minted}
 \end{itemize}
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+% Reference
+%----------------------------------------------------------------------------------------
+\section{Reference}
+\label{section:reference}
+\begin{verbatim}
+@ CSP 相关
+<https://en.wikipedia.org/wiki/Constraint_satisfaction_problem>
+<https://www.geeksforgeeks.org/artificial-intelligence/constraint-satisfaction-problems-csp-in-artificial-intelligence/>
+
+@ Brute-force
+<https://en.wikipedia.org/wiki/Brute-force_search>
+<https://www.geeksforgeeks.org/dsa/brute-force-approach-and-its-pros-and-cons/>
+
+@ Backtracking
+<https://en.wikipedia.org/wiki/Backtracking>
+<https://www.geeksforgeeks.org/dsa/backtracking-algorithms/>
+
+@ pyqt 相关
+1. <https://www.riverbankcomputing.com/static/Docs/PyQt6/>
+2. <https://www.runoob.com/python3/python-pyqt.html>
+3. <https://blog.csdn.net/u012117917/article/details/41604711>
+4. <https://zhuanlan.zhihu.com/p/390192953>
+
+@ 
+\end{verbatim}
 
 \end{document}

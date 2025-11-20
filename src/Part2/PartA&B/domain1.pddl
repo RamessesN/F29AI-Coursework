@@ -11,7 +11,8 @@
         location
         sample
         data
-        image scan - data
+        image - data
+        scan - data
     )
 
     ; -------------------------------
