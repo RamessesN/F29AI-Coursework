@@ -48,6 +48,8 @@ class SudokuMainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle(None)
         self.setFixedSize(600, 750)
+
+        self.setStyleSheet("background-color: #333333;")
         
         self.solver = SudokuSolver()
         self.cells = [[None for _ in range(9)] for _ in range(9)]
