@@ -30,7 +30,7 @@ class SudokuSolver:
         """
         self.board = []
         try:
-            with open(filepath, 'r', encoding='utf8') as f:
+            with open(filepath, 'r', encoding='UTF-8') as f:
                 reader = csv.reader(f)
                 for row in reader:
                     # Converts the string to an integer, handling possible whitespace

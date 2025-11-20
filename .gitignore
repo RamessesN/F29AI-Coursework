@@ -6,3 +6,9 @@
 
 #.venv
 .venv
+
+#.vscode
+.vscode
+
+# __pycache__
+src/Part1/__pycache__

@@ -1,0 +1,7 @@
+QWidget#info_panel {
+    background-color: #CCEEFF; 
+    padding: 10px; 
+    border-radius: 5px; 
+    border: 3px inset #AAAAAA;
+    color: #000000;
+}
