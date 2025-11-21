@@ -196,7 +196,7 @@ class SudokuMainWindow(QMainWindow):
                 raise ValueError("[WARNING] Contradiction appears")
             
             if not self.solver.run_solver():
-                raise ValueError("[ERROR] The question is fucking difficult")
+                raise ValueError("[ERROR] Unsolvable puzzle")
             
             for r in range(9):
                 for c in range(9):

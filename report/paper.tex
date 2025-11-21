@@ -95,42 +95,22 @@
 \maketitle
 
 %----------------------------------------------------------------------------------------
-\begin{abstract}
-This report involves the solutions to the tasks outlined in Coursework 1 for the \texttt{F29AI - Artificial Intelligence} course.
-The main objective of the coursework is to search algorithms and automated planning using \textit{PDDL}.
-
-See Resources on \href{https://github.com/ZhangKeqin0307/couresework1.git}{git@github.com:ZhangKeqin0307/couresework1.git}.
-\end{abstract}
-
+% SECTION 1
 %----------------------------------------------------------------------------------------
-\section{Introduction}
-% TODO: Write the introduction section.
-
+\section{Part 1 - \textit{Sudoku} Puzzels}
 %----------------------------------------------------------------------------------------
-\section{Procedure}
+\subsection{Part 1A}
 %----------------------------------------------------------------------------------------
-\subsection{Part 1 - Solving and Analyzing Sudoku with Search Algorithms}
-\subsubsection{Part 1A}
-\label{subsubsection:Part_1A}
-\textbf{< Brief Description >} \\ [0.5em]
-Assume that a \textit{Sudoku} consists of a $9 \times 9$ grid. 
-The objective is to fill the grid with digits in such a way that each row, each column, and each of the 9 principal $3 \times 3$ sub-squares contains all of the digits from 1 to 9. 
-An approach to an intelligent sudoku solver is needed.
-
-\begin{itemize}
-    \item Define Sudoku formally as a constraint satisfaction problem.
-    \item What are the variables, domains, and constraints?
-    \item Discuss the time complexity of brute-force search vs. backtracking in Sudoku.
-\end{itemize}
-
-\textbf{< Solution >} \\ [0.5em]
+\subsubsection{Procedure}
+%----------------------------------------------------------------------------------------
+\label{subsection:Procedure}
 A CSP(constraint satisfaction problem) should involve the following three components: Variables, Domains and Constraints.
 Therefore, we can define the Sudoku problem as follows:
 \[
 \text{Sudoku} = \langle V, D, C \rangle
 \]
 where
-\begin{enumerate}
+\begin{itemize}
     \item $V$: The set of 81 variables, $V = \{V_{i,j} \mid i,j \in \{1, 2, \ldots, 9\}\}$.
     
     \item $D$: The domain $D_{i,j}$ for each variable $V_{i,j}$ is defined as:
@@ -139,56 +119,42 @@ where
         \item $D_{i,j} = \{1, 2, \ldots, 9\}$, if $V_{i,j}$ is an empty cell.
     \end{itemize}
 
-    \item $C$: The set of 27 "All-Different" constraints:
+    \item $C$: The set of $9 \times 3$ all-different constraints:
     \begin{itemize}
         \item $C_{\text{row}}$: For each row $i$, all variables $V_{i, 1}, V_{i, 2}, \ldots, V_{i, 9}$ must have different values.
         \item $C_{\text{col}}$: For each column $j$, all variables $V_{1, j}, V_{2, j}, \ldots, V_{9, j}$ must have different values.
         \item $C_{\text{subgrid}}$: For each $3 \times 3$ subgrid, all 9 variables within that subgrid must have different values.
     \end{itemize}
-\end{enumerate}
+\end{itemize}
 
-Time Complexity Analysis:
-\begin{itemize}
-    \item Brute-force Search Algorithm: \\
+%----------------------------------------------------------------------------------------
+\subsubsection{Time Complexity Analysis}
+%----------------------------------------------------------------------------------------
+\begin{enumerate}
+    \item \textbf{Brute-force Search Algorithm:} \\
     For each of the $k$ spaces, there are 9 possible choices of numbers. This results in a total of $9 \times 9 \times \ldots \times 9$ (k times) combinations.
     Therefore, the time complexity of the brute-force search algorithm is $O(9^k)$.
     When the worst-case scenario occurs, the algorithm needs to explore all possible combinations, leading to the $O(9^{81})$ time complexity.
 
-    \item Backtracking Search Algorithm: \\
-    It checks the validity of constraints (row, column, and $3 \times 3$ sub-grid) \textbf{immediately} after assigning a number to a cell.
-    If a conflict is detected (i.e., the current partial solution is invalid), the algorithm recursively "backtracks" to the previous step to try a different number. 
-    This process effectively \textbf{prunes} large sub-trees of the search space that are known to be invalid.
-    
-    While the theoretical worst-case time complexity remains $O(9^k)$ (similar to brute-force), the average-case performance is drastically faster. 
-    This is because the \textit{effective branching factor} $b$ becomes significantly smaller than 9 ($b \ll 9$) as the constraints restrict the number of valid choices for each subsequent cell.    
-\end{itemize}
+    \item \textbf{Backtracking Search Algorithm:} \\
+    It checks the validity of constraints (row, column, and $3 \times 3$ sub-grid) immediately after assigning a number to a cell.
+    If a conflict is detected, namely the current partial solution is invalid, the algorithm recursively backtracks to the previous step to try a different number.
+    This process effectively prunes large sub-trees of the search space that are known to be invalid.
+\end{enumerate}
 
-\newpage
-\subsubsection{Part 1B}
-\textbf{< Brief Description >} \\ [0.5em]
-Build an intelligent \textit{Sudoku} solver that accepts input puzzles from \textit{.txt} or \textit{.csv} files. 
-The program displays the solved puzzle in a clean format while printing relevant performance metrics, 
-and concludes with a comparison against the \textit{A*} search algorithm.
+While the theoretical worst-case time complexity remains $O(9^k)$, which is similar to brute-force, the average-case performance is drastically faster. 
+This is because the effective branching factor $b$ becomes significantly smaller than 9 ($b \ll 9$) as the constraints restrict the number of valid choices for each subsequent cell.
 
-\textbf{< Solution >} \\ [0.5em]
-\begin{table}[H]
-    \centering
-    \begin{tabular}{|l|l|}
-        \hline
-        \textbf{Language} & Python \\ \hline
-        \textbf{Solver} & Backtracking with pruning \\ \hline
-        \textbf{Input} & $9 \times 9$ CSV file (0 represents empty) \\ \hline
-        \textbf{Output} & GUI display and relevant metrics printed \\ \hline
-        \textbf{Testing} & Several \textit{Sudoku} puzzle tests \\ \hline
-    \end{tabular}
-    \caption{Preparation of Sudoku Solver Implementation}
-    \label{table:preparation_of_sudoku}
-\end{table}
-
-\hyperref[item:sudoku_solver]{\textbf{Backend Part:}}
+%----------------------------------------------------------------------------------------
+% SECTION 2
+%----------------------------------------------------------------------------------------
+\subsection{Part 1B}
+%----------------------------------------------------------------------------------------
+\subsubsection{Procedure}
+%----------------------------------------------------------------------------------------
 \begin{enumerate}
     \item \textbf{Problem abstraction \& CSP modelling} \\
-    As stated in Part~\ref{subsubsection:Part_1A}, model the puzzle as a CSP:
+    As stated in Part~\ref{subsection:Procedure}, model the puzzle as a CSP:
     \[
     \textit{Sudoku} = \langle V, D, C \rangle
     \]
@@ -207,18 +173,81 @@ and concludes with a comparison against the \textit{A*} search algorithm.
     In our code base this is the method \texttt{load\_from\_csv(filepath)}. Validate that the parsed grid has $9~\text{rows} \times 9~\text{columns}$, otherwise throw / report an error.
 
     \item \textbf{Core solver build} \\
-    ...
-    
+    The core algorithm implements a Depth-First Search(DFS) based Backtracking strategy. The implementation logic within the method \texttt{solve\_algorithm()} proceeds as follows:
+    \begin{enumerate}
+        \item \textbf{Select variables} \\
+        The solver iterates through the grid coordinates to identify the first unassigned variable \(V_{i,j}\).
+
+        \item \textbf{Assign values} \\
+        For the selected empty cell, the algorithm sequentially attempts to assign values \(d \in \{1, \dots, 9\}\).
+
+        \item \textbf{Carry out prune} \\
+        Before finalizing an assignment, the \texttt{is\_valid()} function checks if the assignment violates any Row, Column, or Subgrid constraints. 
+        If a violation is detected, the branch is pruned immediately, which means there will be no further recursion occurs for that value.
+        
+        \item \textbf{Backtracking}
+        \begin{itemize}
+            \item If the assignment is valid, the state is updated and the function calls itself recursively to solve the rest of the board.
+            \item If the recursive call returns \texttt{True}, the solution is propagated up the stack.
+            \item If the recursive call returns \texttt{False}, the algorithm performs a backtrack - reset \(V_{i,j}\) to 0 and proceed to try the next value in the domain.
+        \end{itemize}
+    \end{enumerate}
+
+    \item \textbf{Relevant Metrics Print}
+    \begin{itemize}
+        \item \textbf{Execution Time:} Measured using \texttt{time.perf\_counter()} in milliseconds to evaluate real-world speed.
+        \item \textbf{Backtracks:} Counters incremented whenever the solver hits a dead end and must reverse an assignment. This metric serves as a proxy for the size of the search space explored.
+        \item \textbf{Recursive Calls \& Steps:} Tracks the depth and total operations of the search tree.
+    \end{itemize}
+    These metrics are encapsulated in the \texttt{run\_solver()} wrapper method, separating the measurement logic from the core recursive algorithm.
 \end{enumerate}
 
-\hrulefill
+%----------------------------------------------------------------------------------------
+\subsubsection{Testing Results}
+%----------------------------------------------------------------------------------------
+\begin{itemize}
+    \item \textbf{Methodology} \\
+    In order to test the efficiency of the method ``Backtracking with pruning'', I seperate the puzzels into three levels - Easy, Middle and Difficult.
+    Specifically, puzzles and its corresponding solutions from each level are provided by \href{https://www.sudoku.name/index.php?ln=cn&puzzle_num=&play=1&difficult=4&timer=&time_limit=0&killer_sudoku=0}{\textit{Sudoku Name}}.
 
-\hyperref[item:sudoku_gui]{\textbf{Frontend Part:}}
+    \item \textbf{Result Display} \\
+    \begin{figure}[H]
+        \centering
+        \begin{minipage}[b]{0.25\textwidth}
+            \includegraphics[width=\textwidth]{./img/easy_q.png}
+        \end{minipage}
+        \begin{minipage}[b]{0.25\textwidth}
+            \includegraphics[width=\textwidth]{./img/middle_q.png}
+        \end{minipage}
+        \begin{minipage}[b]{0.25\textwidth}
+            \includegraphics[width=\textwidth]{./img/difficult_q.png}
+        \end{minipage}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \begin{minipage}[b]{0.25\textwidth}
+            \includegraphics[width=\textwidth]{./img/easy_a.png}
+        \end{minipage}
+        \begin{minipage}[b]{0.25\textwidth}
+            \includegraphics[width=\textwidth]{./img/middle_a.png}
+        \end{minipage}
+        \begin{minipage}[b]{0.25\textwidth}
+            \includegraphics[width=\textwidth]{./img/difficult_a.png}
+        \end{minipage}
+        \caption{Puzzles with increasing levels}
+    \end{figure}
+\end{itemize}
+
+%----------------------------------------------------------------------------------------
+\subsubsection{Theoretical Comparison: Backtracking vs. A* Search}
+%----------------------------------------------------------------------------------------
 \begin{enumerate}
-    \item ...
+    \item 
 \end{enumerate}
 
-
+\newpage
+%----------------------------------------------------------------------------------------
 \subsection{Part 2 - Automated Planning}
 \subsubsection{Part 2A: Modelling the Domain}
 \subsubsection{Part 2B: Modelling the Problems}
@@ -340,920 +369,6 @@ class SudokuSolver:
         print(f"Backtracks: {self.backtracks}")
         print("\n")
     \end{minted}
-
-    \item \textbf{Part1 - \textit{sudoku\_gui.py}}
-    \label{item:sudoku_gui}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
-import os
-import sys
-
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget,     QGridLayout, 
-    QVBoxLayout,  QHBoxLayout, QPushButton, QLineEdit, 
-    QFileDialog,  QLabel,      QFrame,      QMessageBox
-)
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont, QIntValidator
-
-from utils import load_qss, base_path
-from sudoku_solver import SudokuSolver
-
-class SudokuCell(QLineEdit):
-    def __init__(self):
-        super().__init__()
-        self.setFixedSize(50, 50)
-        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setFont(QFont("Arial", 20))
-        self.setMaxLength(1)
-        self.setValidator(QIntValidator(1, 9))
-
-        default_style_path = os.path.join(base_path(), "css_styles", "default_style.qss")
-        solved_style_path = os.path.join(base_path(), "css_styles", "solved_style.qss")
-
-        self.default_style = load_qss(default_style_path)
-        self.solved_style = load_qss(solved_style_path)
-
-        self.setStyleSheet(self.default_style)
-
-    def set_solved_style(self):
-        self.setStyleSheet(self.solved_style)
-
-    def reset_style(self):
-        self.clear()
-        self.setStyleSheet(self.default_style)
-
-
-class SudokuMainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle(None)
-        self.setFixedSize(600, 750)
-
-        self.setStyleSheet("background-color: #333333;")
-        
-        self.solver = SudokuSolver()
-        self.cells = [[None for _ in range(9)] for _ in range(9)]
-
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        self.main_layout = QVBoxLayout(central_widget) # Veritical Layout
-        self.main_layout.setContentsMargins(20, 20, 20, 20)
-        self.main_layout.setSpacing(15)
-
-        title = QLabel("Sudoku")
-        title.setFont(QFont("Arial", 25, QFont.Weight.Bold))
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("color: #DDDDDD")
-        self.main_layout.addWidget(title)
-
-        self.grid_panel()
-
-        self.info_panel = QLabel("Sudoku Game")
-        self.info_panel.setObjectName("info_panel")
-        self.info_panel.setFont(QFont("Arial", 16))
-
-        panel_style_path = os.path.join(base_path(), "css_styles", "panel_style.qss")
-
-        self.info_panel.setStyleSheet(load_qss(panel_style_path))
-        self.info_panel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.main_layout.addWidget(self.info_panel)
-
-        self.button_panel()
-
-        self.center_window()
-
-    def grid_panel(self):
-        grid_container = QWidget()
-
-        outer_layout = QGridLayout(grid_container)
-        outer_layout.setSpacing(10)
-
-        for br in range(3):
-            for bc in range(3):
-                block_frame = QFrame()
-                block_frame.setStyleSheet("background-color: #DDDDDD; border-radius: 5px;") 
-                inner_layout = QGridLayout(block_frame)
-                inner_layout.setSpacing(2)
-                inner_layout.setContentsMargins(2, 2, 2, 2)
-
-                for i in range(3):
-                    for j in range(3):
-                        global_r = br * 3 + i
-                        global_c = bc * 3 + j
-                        
-                        cell = SudokuCell()
-                        self.cells[global_r][global_c] = cell
-                        inner_layout.addWidget(cell, i, j)
-                
-                outer_layout.addWidget(block_frame, br, bc)
-
-        self.main_layout.addWidget(
-            grid_container, 
-            alignment = Qt.AlignmentFlag.AlignCenter
-        )
-
-    def button_panel(self):
-        btn_layout = QHBoxLayout()
-        
-        button_style_path = os.path.join(base_path(), "css_styles", "button_style.qss")
-
-        btn_load = QPushButton("Load CSV")
-        btn_load.setStyleSheet(load_qss(button_style_path))
-        btn_load.clicked.connect(self.load_csv)
-        
-        btn_solve = QPushButton("Solve Now")
-        btn_solve.setStyleSheet(load_qss(button_style_path))
-        btn_solve.clicked.connect(self.solve_puzzle)
-        
-        btn_clear = QPushButton("Clear")
-        btn_clear.setStyleSheet(load_qss(button_style_path))
-        btn_clear.clicked.connect(self.clear_board)
-
-        btn_layout.addWidget(btn_load)
-        btn_layout.addWidget(btn_solve)
-        btn_layout.addWidget(btn_clear)
-        
-        self.main_layout.addLayout(btn_layout)
-
-    def load_csv(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open CSV", base_path(), "CSV Files (*.csv)")
-        if file_path:
-            success = self.solver.load_from_csv(file_path)
-            if success:
-                self.update_ui_from_solver()
-                self.info_panel.setText(f"File Loaded: {file_path.split('/')[-1]}")
-            else:
-                QMessageBox.critical(self, "Error", "File loaded failed")
-
-    def update_ui_from_solver(self):
-        for r in range(9):
-            for c in range(9):
-                val = self.solver.board[r][c]
-                cell = self.cells[r][c]
-                cell.reset_style()
-                if val != 0:
-                    cell.setText(str(val))
-                else:
-                    cell.setText("")
-
-    def sync_gui_to_backend(self):
-        current_board = []
-        for r in range(9):
-            row_data = []
-            for c in range(9):
-                text = self.cells[r][c].text()
-                if text.isdigit():
-                    row_data.append(int(text))
-                else:
-                    row_data.append(0)
-            current_board.append(row_data)
-        
-        self.solver.board = current_board
-
-    def solve_puzzle(self):
-        try:
-            self.sync_gui_to_backend()
-
-            if not self.self_check_isvalid():
-                raise ValueError("[WARNING] Contradiction appears")
-            
-            if not self.solver.run_solver():
-                raise ValueError("[ERROR] The question is fucking difficult")
-            
-            for r in range(9):
-                for c in range(9):
-                    val = self.solver.board[r][c]
-                    cell = self.cells[r][c]
-                    cell.setText(str(val))
-                    cell.set_solved_style()
-
-            metrics = (
-                f"🕒 Time: {self.solver.execution_time:.2f} ms  |  "
-                f"🔢 Steps: {self.solver.steps}  |  "
-                f"🔙 Backtracks: {self.solver.backtracks}"
-            )
-            self.info_panel.setText(metrics)
-            self.solver.print_metrics()
-            
-        except Exception as e:
-            print(e)
-            self.info_panel.setText("Try again!")
-            QMessageBox.critical(self, "Error", str(e))
-
-    def self_check_isvalid(self):
-        board = self.solver.board
-        
-        for r in range(9):
-            for c in range(9):
-                num = board[r][c]
-                if num != 0:
-                   
-                    board[r][c] = 0 
-                    if not self.solver.is_valid(r, c, num):
-                        board[r][c] = num
-                        return False
-                    board[r][c] = num
-        return True
-    
-    def center_window(self):
-        screen = QApplication.primaryScreen()
-        screen_geometry = screen.availableGeometry()
-        window_geometry = self.frameGeometry()
-        window_geometry.moveCenter(screen_geometry.center())
-        self.move(window_geometry.topLeft())
-
-    def clear_board(self):
-        self.solver.board = [[0]*9 for _ in range(9)]
-        for r in range(9):
-            for c in range(9):
-                self.cells[r][c].clear()
-                self.cells[r][c].reset_style()
-        self.info_panel.setText("Clear!")
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    
-    app.setStyle("Fusion") 
-    
-    window = SudokuMainWindow()
-    window.show()
-    sys.exit(app.exec())
-    \end{minted}
-
-    \item \textbf{Part2A\&B - \textit{domain1.pddl}}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
-(define (domain lunar)
-    (:requirements :strips :typing)
-
-    ; -------------------------------
-    ; Types
-    ; -------------------------------
-    
-    (:types
-        lander
-        rover
-        location
-        sample
-        data
-        image scan - data
-    )
-
-    ; -------------------------------
-    ; Predicates
-    ; -------------------------------
-
-    (:predicates
-        ; Positions
-        (lander-at ?l - lander ?loc - location)
-        (at ?r - rover ?loc - location)
-        
-        ; Connectivity between surface locations
-        (path ?from - location ?to - location)
-
-        ; The association between rovers and their respective landers
-        (assigned ?r - rover ?l - lander)
-        
-        ; Landing location
-        (unplaced ?l - lander)
-
-        ; Deployment status
-        (deployed ?r - rover)
-        
-        ; If lander had not carried sample 
-        (lander-free ?l - lander)
-        
-        ; Data tasks
-        ; Data objectives
-        (image-target ?img - image ?loc - location)
-        (scan-target ?sc - scan ?loc - location)
-        ; If data has been captured
-        (taken ?d - data)
-        ; If rover hold data
-        (empty-memory ?r - rover)
-        (holding-data ?r - rover ?d - data)
-        ; If data has been transmitted to lander
-        (transmitted ?d - data ?l - lander)
-        
-        ; Sample tasks
-        ; Sample objectives
-        (sample-at ?s - sample ?loc - location)
-        ; If rover hold sample
-        (holding-sample ?r - rover ?s - sample)
-        ; Collection of sample
-        (sample-picked-up ?s - sample)
-        (sample-stored ?s - sample) 
-        (stored ?s - sample ?l - lander)
-    )
-
-    ; -------------------------------
-    ; Actions
-    ; -------------------------------
-    
-    ; Landing location
-    (:action choose-landing
-        :parameters (?l - lander ?wp - location)
-        :precondition
-            (and (unplaced ?l))
-        :effect
-            (and
-                (not (unplaced ?l))
-                (lander-at ?l ?wp)
-            )
-    )
-
-    ; Deploy rover
-    (:action deploy
-        :parameters (?r - rover ?l - lander ?loc - location)
-        :precondition (and
-            (assigned ?r ?l)
-            (lander-at ?l ?loc)
-            (not (deployed ?r))
-        )
-        :effect (and
-            (deployed ?r)
-            (at ?r ?loc)
-        )
-    )
-    
-    ;Retrieve rover
-    (:action retrieve
-        :parameters (?r - rover ?l - lander ?loc - location)
-        :precondition (and
-            (assigned ?r ?l)
-            (deployed ?r)
-            (at ?r ?loc)
-            (lander-at ?l ?loc)
-        )
-        :effect (and
-            (not (deployed ?r))
-            (not (at ?r ?loc))
-        )
-    )
-    
-    ; Movement of rover
-    (:action move
-        :parameters (?r - rover ?from - location ?to - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?from)
-            (path ?from ?to)
-        )
-        :effect (and
-            (at ?r ?to)
-            (not (at ?r ?from))
-        )
-    )
-
-    ; Take Image
-    (:action take-image
-        :parameters (?r - rover ?img - image ?loc - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?loc)
-            (image-target ?img ?loc)
-            (empty-memory ?r)
-            (not (taken ?img))
-        )
-        :effect (and
-            (holding-data ?r ?img)
-            (taken ?img)
-            (not (empty-memory ?r))
-        )
-    )
-
-    ; Perform Scan
-    (:action scan
-        :parameters (?r - rover ?sc - scan ?loc - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?loc)
-            (scan-target ?sc ?loc)
-            (empty-memory ?r)
-            (not (taken ?sc))
-        )
-        :effect (and
-            (holding-data ?r ?sc)
-            (taken ?sc)
-            (not (empty-memory ?r))
-        )
-    )
-    
-    ; Transmit Data to Lander
-    (:action transmit
-        :parameters (?r - rover ?d - data ?l - lander)
-        :precondition (and
-            (assigned ?r ?l)
-            (deployed ?r)
-            (holding-data ?r ?d)
-        )
-        :effect (and
-            (transmitted ?d ?l)
-            (empty-memory ?r)
-            (not (holding-data ?r ?d))
-        )
-    )
-    
-    ; Pick up Sample
-    (:action pick-up-sample
-        :parameters (?r - rover ?s - sample ?loc - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?loc)
-            (sample-at ?s ?loc)
-            (not (sample-picked-up ?s))
-        )
-        :effect (and
-            (holding-sample ?r ?s)
-            (sample-picked-up ?s)
-            (not (sample-at ?s ?loc))
-        )
-    )
-    
-    ; Store Sample in Lander
-    (:action store-sample
-        :parameters (?r - rover ?s - sample ?l - lander)
-        :precondition (and
-            (not (deployed ?r)) 
-            (holding-sample ?r ?s)
-            (assigned ?r ?l)
-            (lander-free ?l)
-        )
-        :effect (and
-            (stored ?s ?l)
-            (sample-stored ?s)
-            (not (holding-sample ?r ?s))
-            (not (lander-free ?l))
-        )
-    )
-)    
-    \end{minted}
-
-    \item \textbf{Part2A\&B - \textit{mission1.pddl}}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
-(define (problem lunar-mission-1)
-    (:domain lunar)
-
-    (:objects
-        lander1 - lander
-        rover1 - rover
-        ; Map
-        wp1 wp2 wp3 wp4 wp5 wp6 - location
-        ; Data
-        image5 - image
-        scan3 - scan
-        ; Sample
-        sample1 - sample
-    )
-
-    (:init
-        ; The association between rover1 and lander1
-        (assigned rover1 lander1)
-        
-        ; Lander1 can land at any location
-        (unplaced lander1)
-        
-        ; Rover1 has not been deployed
-        (not (deployed rover1))
-        
-        ; Lander1 has not stored sample
-        (lander-free lander1)
-        
-        ; Rover1 memory is empty
-        (empty-memory rover1)
-        
-        ; Connectivity between surface locations(Figure 2)
-        (path wp1 wp4)
-        (path wp4 wp3)
-        (path wp3 wp5)
-        (path wp5 wp1)
-        (path wp1 wp2)
-        (path wp2 wp3)
-        
-        ; task objective
-        (image-target image5 wp5)
-        (scan-target scan3 wp3)
-        (sample-at sample1 wp1)
-    )
-
-    (:goal
-        (and
-            ; Indicates that image5 has been captured
-            (taken image5)
-            
-            ; Indicates that scan3 has been captured
-            (taken scan3)
-            
-            ; Indicates that sample1 has been collected and brought back
-            (sample-stored sample1) 
-        )
-    )
-)
-    \end{minted}
-
-    \item \textbf{Part2A\&B - \textit{mission2.pddl}}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
-(define (problem lunar-mission-2)
-    (:domain lunar)
-
-    (:objects
-        lander1 lander2 - lander
-        rover1 rover2 - rover
-        ; Map
-        wp1 wp2 wp3 wp4 wp5 wp6 - location
-        ; Data
-        image2 image3 - image
-        scan4 scan6 - scan
-        ; Sample
-        sample1 sample5 - sample
-    )
-
-    (:init
-        ; The association between rovers and their respective landers
-        (assigned rover1 lander1)
-        (assigned rover2 lander2)
-
-        ; Rover initial deployment states
-        ; Rover1 starts deployed at wp2 (with lander2 at wp2)
-        (not (unplaced lander1))
-        (lander-at lander1 wp2)
-        (at rover1 wp2)
-        (deployed rover1)
-        
-        ; Initial status
-        (lander-free lander1)
-        (empty-memory rover1)
-        
-        ; Rover2 starts undeployed (lander2 unplaced ( to be chosen))
-        (unplaced lander2)
-        (not (deployed rover2))
-        
-        ; Initial status of 1
-        (lander-free lander2)
-        (empty-memory rover2)
-
-        ; Connectivity between surface locations(Figure 2)
-        (path wp1 wp2)
-        (path wp2 wp1)
-        (path wp2 wp3)
-        (path wp3 wp5)
-        (path wp5 wp3)
-        (path wp5 wp6)
-        (path wp6 wp4)
-        (path wp2 wp4)
-        (path wp4 wp2)
-
-        ; task objective
-        ; Image
-        (image-target image2 wp2)
-        (image-target image3 wp3)
-        ; Scan
-        (scan-target scan4 wp4)
-        (scan-target scan6 wp6)
-        ; Sample
-        (sample-at sample1 wp1)
-        (sample-at sample5 wp5)
-    )
-
-    (:goal
-        (and
-            ; Indicates that image2 and image3 have been captured
-            (taken image2)
-            (taken image3)
-            
-            ; Indicates that scan4 and scan6 have been captured
-            (taken scan4)
-            (taken scan6)
-
-            ; Indicates that sample1 and sample5 have been collected(picked up and stored)
-            (sample-stored sample1)
-            (sample-stored sample5)
-        )
-    )
-)
-    \end{minted}
-
-    \item \textbf{Part2C - \textit{domain2.pddl}}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
-(define (domain lunar)
-    (:requirements :strips :typing)
-
-    ; -------------------------------
-    ; Types
-    ; -------------------------------
-    
-    (:types
-        lander
-        rover
-        location
-        sample
-        data
-        image scan - data
-        ; New:
-        astronaut
-        area
-    )
-
-    ; -------------------------------
-    ; Predicates
-    ; -------------------------------
-
-    (:predicates
-        ; positions
-        (lander-at ?l - lander ?loc - location)
-        (at ?r - rover ?loc - location)
-        
-        ; Connectivity between surface locations
-        (path ?from - location ?to - location)
-
-        ; The association between rovers and their respective landers
-        (assigned ?r - rover ?l - lander)
-        
-        ; Landing location
-        (unplaced ?l - lander)
-
-        ; deployment status
-        (deployed ?r - rover)
-        
-        ; If lander had not carried sample 
-        (lander-free ?l - lander)
-        
-        ; Data tasks
-        ; Data objectives
-        (image-target ?img - image ?loc - location)
-        (scan-target ?sc - scan ?loc - location)
-        ; If data has been captured
-        (taken ?d - data)
-        ; If rover hold data
-        (empty-memory ?r - rover)
-        (holding-data ?r - rover ?d - data)
-        ; If data has been transmitted to lander
-        (transmitted ?d - data ?l - lander)
-        
-        ; Sample tasks
-        ; Sample objectives
-        (sample-at ?s - sample ?loc - location)
-        ; If rover hold sample
-        (holding-sample ?r - rover ?s - sample)
-        ; Collection of sample
-        (sample-picked-up ?s - sample)
-        (sample-stored ?s - sample) 
-        (stored ?s - sample ?l - lander)
-        
-        ; New: 
-        ; The astronaut is located in which area of the lander
-        (crew-in ?a - astronaut ?l - lander ?ar - area)
-    )
-
-    ; -------------------------------
-    ; Actions
-    ; -------------------------------
-    
-    ; New action: 
-    ; Movement of astronaut in lander
-    (:action move-crew
-        :parameters (?a - astronaut ?l - lander ?from - area ?to - area)
-        :precondition (crew-in ?a ?l ?from)
-        :effect (and
-            (crew-in ?a ?l ?to)
-            (not (crew-in ?a ?l ?from))
-        )
-    )
-    
-    ; Landing location
-    (:action choose-landing
-        :parameters (?l - lander ?wp - location)
-        :precondition
-            (and (unplaced ?l))
-        :effect
-            (and
-                (not (unplaced ?l))
-                (lander-at ?l ?wp)
-            )
-    )
-    
-    ; Deploy rover
-    (:action deploy
-        :parameters (?r - rover ?l - lander ?loc - location ?a - astronaut)
-        :precondition (and
-            (assigned ?r ?l)
-            (lander-at ?l ?loc)
-            (not (deployed ?r))
-            (crew-in ?a ?l docking-bay)
-        )
-        :effect (and
-            (deployed ?r)
-            (at ?r ?loc)
-        )
-    )
-    
-    ;Retrieve rover
-    (:action retrieve
-        :parameters (?r - rover ?l - lander ?loc - location ?a - astronaut)
-        :precondition (and
-            (assigned ?r ?l)
-            (deployed ?r)
-            (at ?r ?loc)
-            (lander-at ?l ?loc)
-            (crew-in ?a ?l docking-bay)
-        )
-        :effect (and
-            (not (deployed ?r))
-            (not (at ?r ?loc))
-        )
-    )
-    
-    ; Movement of rover
-    (:action move
-        :parameters (?r - rover ?from - location ?to - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?from)
-            (path ?from ?to)
-        )
-        :effect (and
-            (at ?r ?to)
-            (not (at ?r ?from))
-        )
-    )
-
-    ; Take Image
-    (:action take-image
-        :parameters (?r - rover ?img - image ?loc - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?loc)
-            (image-target ?img ?loc)
-            (empty-memory ?r)
-            (not (taken ?img))
-        )
-        :effect (and
-            (holding-data ?r ?img)
-            (taken ?img)
-            (not (empty-memory ?r))
-        )
-    )
-
-    ; Perform Scan
-    (:action scan
-        :parameters (?r - rover ?sc - scan ?loc - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?loc)
-            (scan-target ?sc ?loc)
-            (empty-memory ?r)
-            (not (taken ?sc))
-        )
-        :effect (and
-            (holding-data ?r ?sc)
-            (taken ?sc)
-            (not (empty-memory ?r))
-        )
-    )
-    
-    ; Transmit Data to Lander
-    (:action transmit
-        :parameters (?r - rover ?d - data ?l - lander ?a - astronaut)
-        :precondition (and
-            (assigned ?r ?l)
-            (deployed ?r)
-            (holding-data ?r ?d)
-            (crew-in ?a ?l control-room)
-        )
-        :effect (and
-            (transmitted ?d ?l)
-            (empty-memory ?r)
-            (not (holding-data ?r ?d))
-        )
-    )
-    
-    ; Pick up Sample
-    (:action pick-up-sample
-        :parameters (?r - rover ?s - sample ?loc - location)
-        :precondition (and
-            (deployed ?r)
-            (at ?r ?loc)
-            (sample-at ?s ?loc)
-            (not (sample-picked-up ?s))
-        )
-        :effect (and
-            (holding-sample ?r ?s)
-            (sample-picked-up ?s)
-            (not (sample-at ?s ?loc))
-        )
-    )
-    
-    ; Store Sample in Lander
-    (:action store-sample
-        :parameters (?r - rover ?s - sample ?l - lander ?a - astronaut)
-        :precondition (and
-            (not (deployed ?r)) 
-            (holding-sample ?r ?s)
-            (assigned ?r ?l)
-            (lander-free ?l)
-            (crew-in ?a ?l docking-bay)
-        )
-        :effect (and
-            (stored ?s ?l)
-            (sample-stored ?s)
-            (not (holding-sample ?r ?s))
-            (not (lander-free ?l))
-        )
-    )
-) 
-    \end{minted}
-
-    \item \textbf{Part2C - \textit{mission3.pddl}}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{PDDL}
-(define (problem lunar-mission-2)
-    (:domain lunar)
-
-    (:objects
-        lander1 lander2 - lander
-        rover1 rover2 - rover
-        ; Map
-        wp1 wp2 wp3 wp4 wp5 wp6 - location
-        ; Data
-        image2 image3 - image
-        scan4 scan6 - scan
-        ; Sample
-        sample1 sample5 - sample
-        ; New:
-        ; Area
-        control-room docking-bay - area  
-        ; People
-        alice bob - astronaut
-
-    )
-
-    (:init
-        ; New:
-        ; Crew position
-        (crew-in alice lander1 docking-bay)  
-        (crew-in bob lander2 control-room)
-        
-        ; The association between rovers and their respective landers
-        (assigned rover1 lander1)
-        (assigned rover2 lander2)
-
-        ; Rover initial deployment states
-        ; Rover1 starts deployed at wp2 (with lander2)
-        (not (unplaced lander1))
-        (lander-at lander1 wp2)
-        (at rover1 wp2)
-        (deployed rover1)
-        
-        ; Initial status
-        (lander-free lander1)
-        (empty-memory rover1)
-        
-        ; Rover2 starts undeployed (lander2 unplaced ( to be chosen))
-        (unplaced lander2)
-        (not (deployed rover2))
-        
-        ; Initial status of 2
-        (lander-free lander2)
-        (empty-memory rover2)
-
-        ; Connectivity between surface locations(Figure 3)
-        (path wp1 wp2)
-        (path wp2 wp1)
-        (path wp2 wp3)
-        (path wp3 wp5)
-        (path wp5 wp3)
-        (path wp5 wp6)
-        (path wp6 wp4)
-        (path wp2 wp4)
-        (path wp4 wp2)
-
-        ; task objective
-        ; Image
-        (image-target image2 wp2)
-        (image-target image3 wp3)
-        ; Scan
-        (scan-target scan4 wp4)
-        (scan-target scan6 wp6)
-        ; Sample
-        (sample-at sample1 wp1)
-        (sample-at sample5 wp5)
-    )
-
-    (:goal
-        (and
-            ; Indicates that image2 and image3 have been captured
-            (taken image2)
-            (taken image3)
-            
-            ; Indicates that scan4 and scan6 have been captured
-            (taken scan4)
-            (taken scan6)
-
-            ; Indicates that sample1 and sample5 have been collected(picked up and stored)
-            (sample-stored sample1)
-            (sample-stored sample5)
-        )
-    )
-)
-    \end{minted}
 \end{itemize}
 
 \newpage
@@ -1283,6 +398,8 @@ if __name__ == "__main__":
 4. <https://zhuanlan.zhihu.com/p/390192953>
 
 @ 
+
+See Resources on \href{https://github.com/ZhangKeqin0307/couresework1.git}{git@github.com:ZhangKeqin0307/couresework1.git}.
 \end{verbatim}
 
 \end{document}

@@ -1,14 +1,8 @@
 {
   "jobname": "paper",
   "md5": "7E3F660480AB1640DE8024C200B5A4D3",
-  "timestamp": "20251120152315",
+  "timestamp": "20251121204015",
   "cachefiles": [
-    "0348E961E1EA594054D5B460A69EECA5.highlight.minted",
-    "125C53EC1373EC00599971453AC6047E.highlight.minted",
-    "8A7057AEF8B02E17C2E39656C074BD43.highlight.minted",
-    "940BA27BA7A5CCB4C00E21545BABE790.highlight.minted",
-    "AEFEB2E6B19FD653648383B672F9F9DD.highlight.minted",
-    "EEDAA308EF26CE0AD33328308287463A.highlight.minted",
     "F1FCE7252E482D99E5A5C921DC3DF185.highlight.minted",
     "_7E3F660480AB1640DE8024C200B5A4D3.index.minted",
     "default.style.minted"
