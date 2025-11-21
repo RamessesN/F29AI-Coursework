@@ -119,7 +119,7 @@ where
         \item $D_{i,j} = \{1, 2, \ldots, 9\}$, if $V_{i,j}$ is an empty cell.
     \end{itemize}
 
-    \item $C$: The set of $9 \times 3$ all-different constraints:
+    \item $C$: The set of 27 (9 rows + 9 columns + 9 subgrids) all-different constraints:
     \begin{itemize}
         \item $C_{\text{row}}$: For each row $i$, all variables $V_{i, 1}, V_{i, 2}, \ldots, V_{i, 9}$ must have different values.
         \item $C_{\text{col}}$: For each column $j$, all variables $V_{1, j}, V_{2, j}, \ldots, V_{9, j}$ must have different values.
@@ -154,13 +154,7 @@ This is because the effective branching factor $b$ becomes significantly smaller
 %----------------------------------------------------------------------------------------
 \begin{enumerate}
     \item \textbf{Problem abstraction \& CSP modelling} \\
-    As stated in Part~\ref{subsection:Procedure}, model the puzzle as a CSP:
-    \[
-    \textit{Sudoku} = \langle V, D, C \rangle
-    \]
-    where \(V\) is the 81 variables \(V_{i,j}\); \(D_{i,j}\) are domains and \(C\) are the row / column / $3 \times 3$ subgrid all-different constraints. 
-    
-    In code this is corresponding to:
+    As stated in Part~\ref{subsection:Procedure}, the corresponding implementation in code is as follows:
     \begin{itemize}
         \item \texttt{sudoku\_solver.board} : a $9 \times 9$ integer matrix (0 means empty).
         \item \texttt{is\_valid(row,col,num)} : enforces the three constraint types for a tentative assignment.
@@ -208,7 +202,7 @@ This is because the effective branching factor $b$ becomes significantly smaller
 \begin{itemize}
     \item \textbf{Methodology} \\
     In order to test the efficiency of the method ``Backtracking with pruning'', I seperate the puzzels into three levels - Easy, Middle and Difficult.
-    Specifically, puzzles and its corresponding solutions from each level are provided by \href{https://www.sudoku.name/index.php?ln=cn&puzzle_num=&play=1&difficult=4&timer=&time_limit=0&killer_sudoku=0}{\textit{Sudoku Name}}.
+    Specifically, puzzles and its corresponding solutions from each level are provided by \href{https://www.sudoku.name/index.php?ln=cn&puzzle_num=&play=1&difficult=4&timer=&time_limit=0&killer_sudoku=0}{Sudoku Name}.
 
     \item \textbf{Result Display} \\
     \begin{figure}[H]
@@ -237,13 +231,58 @@ This is because the effective branching factor $b$ becomes significantly smaller
         \end{minipage}
         \caption{Puzzles with increasing levels}
     \end{figure}
+
+    \item \textbf{Quantitative Analysis}
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            \textbf{Difficulty} & \textbf{Time (ms)} & \textbf{Backtracks} & \textbf{Recursive Calls} \\ \hline
+            Easy & 1.94 ms & 1,836 & 181 \\ \hline
+            Middle & 12.61 ms & 14,755 & 1,608 \\ \hline
+            Difficult & 91.60 ms & 194,311 & 21,558 \\ \hline
+        \end{tabular}
+        \caption{Performance Metrics by Difficulty Level}
+    \end{table}
 \end{itemize}
 
 %----------------------------------------------------------------------------------------
 \subsubsection{Theoretical Comparison: Backtracking vs. A* Search}
 %----------------------------------------------------------------------------------------
 \begin{enumerate}
-    \item 
+    \item \textbf{\textit{A*} Search for \textit{Sudoku}} \\
+    \textit{Sudoku} puzzle can be defined by \textit{A*} cost function $f(n) = g(n) + h(n)$:
+    \begin{equation}
+        \begin{cases}
+            $g(n)$~\text{(path cost)} : \text{The~number~of~cells~filled~so~far} \\
+            $h(n)$~\text{(heuristic)} : \text{The~sum~of~domain~sizes~of~all~empty~cells}
+        \end{cases}
+        \nonumber
+    \end{equation}
+
+    \item \textbf{Comparison table}
+    \begin{table}[H]
+        \centering
+        \renewcommand{\arraystretch}{1.2}
+        \small
+        \begin{tabular}{|p{0.22\linewidth}|p{0.35\linewidth}|p{0.35\linewidth}|}
+            \hline
+            \textbf{Metrics} & \textbf{Backtracking} & \textbf{\textit{A*} Search} \\ \hline
+            \textbf{Data Structure} & DFS (stack) & BFS (priority queue) \\ \hline
+            \textbf{Time Taken} & Faster. Low overhead per step allows checking millions of nodes quickly. & Slower. High overhead due to calculating heuristics $h(n)$ and sorting the queue at every step. \\ \hline
+            \textbf{Search Steps} & High. May explore many redundant branches before backtracking. & Low. Heuristics guide the search effectively, visiting fewer total nodes. \\ \hline
+            \textbf{Memory Usage} & Linear $O(D)$ & Exponential $O(b^d)$ \\ \hline
+            \textbf{Failure Case} & Can get stuck in a wrong branch for too long on malicious puzzles. & Likely to crash due to running out of RAM before finding a solution. \\ \hline
+        \end{tabular}
+        \caption{Backtracking vs. A* Search for \textit{Sudoku} Puzzles}
+    \end{table}
+
+    \item \textbf{Analysis of performance}
+    \begin{itemize}
+        \item \textbf{Efficiency:} Though \textit{A*} visits fewer nodes, the computational cost per node is high due to heuristic calculations and priority queue maintenance. Backtracking checks millions of nodes in milliseconds due to its minimal overhead, resulting in faster overall execution time.
+        \item \textbf{Nature of the Problem:} \textit{A*} is optimized for finding the \textit{shortest path} in a graph. However, \textit{Sudoku} is a typical CSP where the solution depth is fixed. We require any valid solution, not the shortest one, making \textit{A*}'s path-optimizing features redundant.
+        \item \textbf{Space Complexity:} The exponential memory usage of \textit{A*} makes it impractical for hard puzzles, whereas Backtracking's linear space complexity ensures robustness on any environments.
+    \end{itemize}
 \end{enumerate}
 
 \newpage
