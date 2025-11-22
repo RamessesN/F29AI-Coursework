@@ -1,0 +1,6 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{start\PYGZus{}time} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{perf\PYGZus{}counter}\PYG{p}{()}
+\PYG{n}{success} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{solve\PYGZus{}algorithm}\PYG{p}{()}
+\PYG{n}{end\PYGZus{}time} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{perf\PYGZus{}counter}\PYG{p}{()}
+\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{execution\PYGZus{}time} \PYG{o}{=} \PYG{p}{(}\PYG{n}{end\PYGZus{}time} \PYG{o}{\PYGZhy{}} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{start\PYGZus{}time}\PYG{p}{)} \PYG{o}{*} \PYG{l+m+mi}{1000}
+\end{MintedVerbatim}

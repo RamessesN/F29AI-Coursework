@@ -15,6 +15,7 @@
 \usepackage{caption,subcaption}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.9}
+\usepackage{xurl}
 
 \usepackage[colorlinks=true,
             linkcolor=blue,
@@ -35,10 +36,7 @@
 %----------------------------------------------------------------------------------------
 \makeatletter
 \renewenvironment{abstract}{
-    \begin{center}
-        \large\bfseries \abstractname
-    \end{center}
-    \begin{quote}\small
+    \begin{quote}\small \centering
 }{
     \end{quote}
 }
@@ -95,6 +93,13 @@
 \maketitle
 
 %----------------------------------------------------------------------------------------
+% ABSTRACT
+%----------------------------------------------------------------------------------------
+\begin{abstract}
+    \textbf{\textit{Note}}: See Resources on \href{https://github.com/ZhangKeqin0307/couresework1.git}{git@github.com:ZhangKeqin0307/couresework1.git}.
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
 % SECTION 1
 %----------------------------------------------------------------------------------------
 \section{Part 1 - \textit{Sudoku} Puzzels}
@@ -104,7 +109,7 @@
 \subsubsection{Procedure}
 %----------------------------------------------------------------------------------------
 \label{subsection:Procedure}
-A CSP(constraint satisfaction problem) should involve the following three components: Variables, Domains and Constraints.
+A CSP(constraint satisfaction problem) \cite{csp_ref} should involve the following three components: Variables, Domains and Constraints.
 Therefore, we can define the Sudoku problem as follows:
 \[
 \text{Sudoku} = \langle V, D, C \rangle
@@ -114,36 +119,39 @@ where
     \item $V$: The set of 81 variables, $V = \{V_{i,j} \mid i,j \in \{1, 2, \ldots, 9\}\}$.
     
     \item $D$: The domain $D_{i,j}$ for each variable $V_{i,j}$ is defined as:
-    \begin{itemize}
-        \item $D_{i,j} = \{k\}$, if $V_{i,j}$ is a given cell with value $k$.
-        \item $D_{i,j} = \{1, 2, \ldots, 9\}$, if $V_{i,j}$ is an empty cell.
-    \end{itemize}
+    \begin{equation}
+        \begin{cases}
+            D_{i,j} = k, & \text{if } V_{i,j} \text{ is a given cell with value } k, \\
+            D_{i,j} = \{1, 2, \ldots, 9\}, & \text{if } V_{i,j} \text{ is an empty cell}.
+        \end{cases}
+        \nonumber
+    \end{equation}
 
     \item $C$: The set of 27 (9 rows + 9 columns + 9 subgrids) all-different constraints:
-    \begin{itemize}
-        \item $C_{\text{row}}$: For each row $i$, all variables $V_{i, 1}, V_{i, 2}, \ldots, V_{i, 9}$ must have different values.
-        \item $C_{\text{col}}$: For each column $j$, all variables $V_{1, j}, V_{2, j}, \ldots, V_{9, j}$ must have different values.
-        \item $C_{\text{subgrid}}$: For each $3 \times 3$ subgrid, all 9 variables within that subgrid must have different values.
-    \end{itemize}
+    \begin{equation}
+        \begin{cases}
+            C_{\text{row}}: & \text{Each row } i \text{ contains 9 different values}, \\
+            C_{\text{col}}: & \text{Each column } j \text{ contains 9 different values}, \\
+            C_{\text{subgrid}}: & \text{Each } 3 \times 3 \text{ subgrid contains 9 different values}.
+        \end{cases}
+        \nonumber
+    \end{equation}
 \end{itemize}
 
 %----------------------------------------------------------------------------------------
 \subsubsection{Time Complexity Analysis}
 %----------------------------------------------------------------------------------------
 \begin{enumerate}
-    \item \textbf{Brute-force Search Algorithm:} \\
+    \item \textbf{Brute-force Search Algorithm} \cite{bruteforce_ref} : \\
     For each of the $k$ spaces, there are 9 possible choices of numbers. This results in a total of $9 \times 9 \times \ldots \times 9$ (k times) combinations.
     Therefore, the time complexity of the brute-force search algorithm is $O(9^k)$.
-    When the worst-case scenario occurs, the algorithm needs to explore all possible combinations, leading to the $O(9^{81})$ time complexity.
+    The worst-case scenario is that algorithm needs to explore all possible combinations, leading to the $O(9^{81})$ time complexity.
 
-    \item \textbf{Backtracking Search Algorithm:} \\
-    It checks the validity of constraints (row, column, and $3 \times 3$ sub-grid) immediately after assigning a number to a cell.
-    If a conflict is detected, namely the current partial solution is invalid, the algorithm recursively backtracks to the previous step to try a different number.
-    This process effectively prunes large sub-trees of the search space that are known to be invalid.
+    \item \textbf{Backtracking Search Algorithm} \cite{backtracking_ref} : \\
+    This algorithm assigns a number to a cell and immediately checks constraint validity (row, column, and $3 \times 3$ sub-grid). 
+    If the partial assignment violates any constraint, it backtracks recursively to the previous step and tries a different value, thereby pruning large invalid sub-trees in the search space. 
+    Although the theoretical worst-case time complexity is still $O(9^k)$ (similar to brute-force), the practical performance is dramatically faster because the effective branching factor $b$ is greatly reduced by constraint filtering ($b \ll 9$).
 \end{enumerate}
-
-While the theoretical worst-case time complexity remains $O(9^k)$, which is similar to brute-force, the average-case performance is drastically faster. 
-This is because the effective branching factor $b$ becomes significantly smaller than 9 ($b \ll 9$) as the constraints restrict the number of valid choices for each subsequent cell.
 
 %----------------------------------------------------------------------------------------
 % SECTION 2
@@ -153,47 +161,60 @@ This is because the effective branching factor $b$ becomes significantly smaller
 \subsubsection{Procedure}
 %----------------------------------------------------------------------------------------
 \begin{enumerate}
-    \item \textbf{Problem abstraction \& CSP modelling} \\
-    As stated in Part~\ref{subsection:Procedure}, the corresponding implementation in code is as follows:
-    \begin{itemize}
-        \item \texttt{sudoku\_solver.board} : a $9 \times 9$ integer matrix (0 means empty).
-        \item \texttt{is\_valid(row,col,num)} : enforces the three constraint types for a tentative assignment.
-    \end{itemize}
+    \item \textbf{CSP Modelling} \\
+    The Sudoku grid is modelled as a $9 \times 9$ matrix \texttt{sudoku\_solver.board}.  
+    A candidate assignment is validated by \texttt{is\_valid(row, col, num)}, which checks Row, Column, and Subgrid constraints.
 
-    \item \textbf{Input format preset} \\
-    Implement robust input routines that accept \texttt{.csv} formatted $9 \times 9$ grids.
-    It needs to read rows with comma separation, convert each token to int, accept 0 or blank as empty.
+    \item \textbf{Input Handling} \\
+    The solver accepts \texttt{.csv} files containing a $9 \times 9$ grid.  
+    \texttt{load\_from\_csv(filepath)} parses comma-separated rows, interprets \texttt{0}/blank as empty cells, and rejects matrices not equal to $9 \times 9$.
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
+self.board = []
+with open(filepath, 'r', encoding='UTF-8') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        index = [int(num.strip()) for num in row if num.strip().isdigit()]
+        if len(index) == 9:
+            self.board.append(index)
+    \end{minted}
 
-    In our code base this is the method \texttt{load\_from\_csv(filepath)}. Validate that the parsed grid has $9~\text{rows} \times 9~\text{columns}$, otherwise throw / report an error.
-
-    \item \textbf{Core solver build} \\
-    The core algorithm implements a Depth-First Search(DFS) based Backtracking strategy. The implementation logic within the method \texttt{solve\_algorithm()} proceeds as follows:
+    \item \textbf{Backtracking Solver} \\
+    Implemented as DFS in \texttt{solve\_algorithm()}:
     \begin{enumerate}
-        \item \textbf{Select variables} \\
-        The solver iterates through the grid coordinates to identify the first unassigned variable \(V_{i,j}\).
-
-        \item \textbf{Assign values} \\
-        For the selected empty cell, the algorithm sequentially attempts to assign values \(d \in \{1, \dots, 9\}\).
-
-        \item \textbf{Carry out prune} \\
-        Before finalizing an assignment, the \texttt{is\_valid()} function checks if the assignment violates any Row, Column, or Subgrid constraints. 
-        If a violation is detected, the branch is pruned immediately, which means there will be no further recursion occurs for that value.
-        
-        \item \textbf{Backtracking}
-        \begin{itemize}
-            \item If the assignment is valid, the state is updated and the function calls itself recursively to solve the rest of the board.
-            \item If the recursive call returns \texttt{True}, the solution is propagated up the stack.
-            \item If the recursive call returns \texttt{False}, the algorithm performs a backtrack - reset \(V_{i,j}\) to 0 and proceed to try the next value in the domain.
-        \end{itemize}
+        \item \textit{Variable selection:} scan the grid to locate the next empty cell $V_{i,j}$.
+        \item \textit{Value assignment:} try $d \in \{1,\dots,9\}$ sequentially.
+        \item \textit{Pruning:} if \texttt{is\_valid()} fails, skip deeper recursion.
+        \item \textit{Backtracking:} on failure, reset $V_{i,j}$ to 0 and attempt the next candidate.
     \end{enumerate}
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
+for i in range(9):
+    for j in range(9):
+        if self.board[i][j] == 0:
+            for num in range(1, 10):
+                self.steps += 1
+                if self.is_valid(i, j, num):
+                    self.board[i][j] = num
+                    
+                    if self.solve_algorithm():
+                        return True
+                    
+                    self.board[i][j] = 0
+                    self.backtracks += 1
+    \end{minted}
 
-    \item \textbf{Relevant Metrics Print}
+    \item \textbf{Performance Metrics} \\
+    \texttt{run\_solver()} records:  
     \begin{itemize}
-        \item \textbf{Execution Time:} Measured using \texttt{time.perf\_counter()} in milliseconds to evaluate real-world speed.
-        \item \textbf{Backtracks:} Counters incremented whenever the solver hits a dead end and must reverse an assignment. This metric serves as a proxy for the size of the search space explored.
-        \item \textbf{Recursive Calls \& Steps:} Tracks the depth and total operations of the search tree.
+        \item execution time (via \texttt{time.perf\_counter()}).
+        \item number of backtracks.
+        \item number of recursive calls.
     \end{itemize}
-    These metrics are encapsulated in the \texttt{run\_solver()} wrapper method, separating the measurement logic from the core recursive algorithm.
+    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
+self.start_time = time.perf_counter()
+success = self.solve_algorithm()
+end_time = time.perf_counter()
+self.execution_time = (end_time - self.start_time) * 1000
+    \end{minted}    
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
@@ -202,9 +223,11 @@ This is because the effective branching factor $b$ becomes significantly smaller
 \begin{itemize}
     \item \textbf{Methodology} \\
     In order to test the efficiency of the method ``Backtracking with pruning'', I seperate the puzzels into three levels - Easy, Middle and Difficult.
-    Specifically, puzzles and its corresponding solutions from each level are provided by \href{https://www.sudoku.name/index.php?ln=cn&puzzle_num=&play=1&difficult=4&timer=&time_limit=0&killer_sudoku=0}{Sudoku Name}.
+    Specifically, puzzles and its corresponding solutions from each level are provided by \textit{``Sudoku Name''} \cite{sudoku_data_ref}.
 
     \item \textbf{Result Display} \\
+    To facilitate user interaction and clearly visualize the solving process, a graphical interface was implemented using the \textit{PyQt6} framework \cite{pyqt_ref}. 
+    The figures below demonstrate the artifact's capability to handle puzzles of varying difficulties, displaying both the initial board configuration and the final calculated solution in a clean grid format.
     \begin{figure}[H]
         \centering
         \begin{minipage}[b]{0.25\textwidth}
@@ -229,7 +252,7 @@ This is because the effective branching factor $b$ becomes significantly smaller
         \begin{minipage}[b]{0.25\textwidth}
             \includegraphics[width=\textwidth]{./img/difficult_a.png}
         \end{minipage}
-        \caption{Puzzles with increasing levels}
+        \caption{Visualisation of the Sudoku Solver Artefact on different difficulty levels}
     \end{figure}
 
     \item \textbf{Quantitative Analysis}
@@ -254,8 +277,8 @@ This is because the effective branching factor $b$ becomes significantly smaller
     \textit{Sudoku} puzzle can be defined by \textit{A*} cost function $f(n) = g(n) + h(n)$:
     \begin{equation}
         \begin{cases}
-            $g(n)$~\text{(path cost)} : \text{The~number~of~cells~filled~so~far} \\
-            $h(n)$~\text{(heuristic)} : \text{The~sum~of~domain~sizes~of~all~empty~cells}
+            g(n)~\text{(path cost)} : \text{The~number~of~cells~filled~so~far} \\
+            h(n)~\text{(heuristic)} : \text{The~sum~of~domain~sizes~of~all~empty~cells}
         \end{cases}
         \nonumber
     \end{equation}
@@ -286,12 +309,15 @@ This is because the effective branching factor $b$ becomes significantly smaller
 \end{enumerate}
 
 \newpage
+
 %----------------------------------------------------------------------------------------
 \subsection{Part 2 - Automated Planning}
+%----------------------------------------------------------------------------------------
 \subsubsection{Part 2A: Modelling the Domain}
+%----------------------------------------------------------------------------------------
 \subsubsection{Part 2B: Modelling the Problems}
+%----------------------------------------------------------------------------------------
 \subsubsection{Part 2C: Extension}
-
 %----------------------------------------------------------------------------------------
 \section{Reflection and Analysis}
 
@@ -301,144 +327,31 @@ This is because the effective branching factor $b$ becomes significantly smaller
 \newpage
 
 %----------------------------------------------------------------------------------------
-% Source Code
-%----------------------------------------------------------------------------------------
-\pagestyle{empty}
-\section{Source Code}
-\label{section:source_code}
-\begin{itemize}
-    \item \textbf{Part1 - \textit{sudoku\_solver.py}}
-    \label{item:sudoku_solver}
-    \begin{minted}[fontsize=\footnotesize,breaklines,linenos,frame=single]{python}
-import csv
-import time
-
-class SudokuSolver:
-    def __init__(self):
-        self.board = []
-        # Relevant metrics
-        self.steps = 0            # Total number of steps
-        self.recursive_calls = 0  # Recursive calls
-        self.backtracks = 0       # Backtracks
-        self.start_time = 0
-        self.execution_time = 0
-
-    def load_from_csv(self, filepath):
-        self.board = []
-        try:
-            with open(filepath, 'r', encoding='UTF-8') as f:
-                reader = csv.reader(f)
-                for row in reader:
-                    # Converts the string to an integer, handling possible whitespace
-                    index = [int(num.strip()) for num in row if num.strip().isdigit()]
-                    if len(index) == 9:
-                        self.board.append(index)
-            
-            if len(self.board) != 9:
-                raise ValueError("Invalid row count in CSV")
-            
-            print(f"[Succeed] File loaded: {filepath}")
-            return True
-        except Exception as e:
-            print(f"[Error] File loading failed: {e}")
-            return False
-
-    def is_valid(self, row, col, num):
-        # Row check
-        for x in range(9):
-            if self.board[row][x] == num:
-                return False
-
-        # Column check
-        for x in range(9):
-            if self.board[x][col] == num:
-                return False
-
-        # 3x3 box check
-        start_row = row - row % 3
-        start_col = col - col % 3
-        for i in range(3):
-            for j in range(3):
-                if self.board[i + start_row][j + start_col] == num:
-                    return False
-        
-        return True
-
-    def solve_algorithm(self):
-        self.recursive_calls += 1
-        
-        for i in range(9):
-            for j in range(9):
-                if self.board[i][j] == 0:
-                    for num in range(1, 10):
-                        self.steps += 1
-                        # If invalid, prune it
-                        if self.is_valid(i, j, num):
-                            self.board[i][j] = num
-                            
-                            if self.solve_algorithm():
-                                return True
-                            
-                            # Backtracking
-                            self.board[i][j] = 0
-                            self.backtracks += 1
-                    
-                    return False
-        return True
-
-    def run_solver(self):
-        self.steps = 0
-        self.recursive_calls = 0
-        self.backtracks = 0
-        
-        self.start_time = time.perf_counter()
-        
-        success = self.solve_algorithm()
-        
-        end_time = time.perf_counter()
-        self.execution_time = (end_time - self.start_time) * 1000
-        
-        return success
-
-    def print_metrics(self):
-        print("\n")
-        print(f"Execution Time: {self.execution_time:.4f} ms")
-        print(f"Total Steps (Attempts): {self.steps}")
-        print(f"Recursive Calls: {self.recursive_calls}")
-        print(f"Backtracks: {self.backtracks}")
-        print("\n")
-    \end{minted}
-\end{itemize}
-
-\newpage
-
-%----------------------------------------------------------------------------------------
 % Reference
 %----------------------------------------------------------------------------------------
-\section{Reference}
-\label{section:reference}
-\begin{verbatim}
-@ CSP 相关
-<https://en.wikipedia.org/wiki/Constraint_satisfaction_problem>
-<https://www.geeksforgeeks.org/artificial-intelligence/constraint-satisfaction-problems-csp-in-artificial-intelligence/>
+% \phantomsection % 如果引用跳转位置不准，可以取消这行的注释
+\begin{thebibliography}{99}
+    \raggedright
+    \bibitem{csp_ref}
+    Wikipedia contributors. "Constraint satisfaction problem." Wikipedia, The Free Encyclopedia. [Online].
+    Available: \url{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}
 
-@ Brute-force
-<https://en.wikipedia.org/wiki/Brute-force_search>
-<https://www.geeksforgeeks.org/dsa/brute-force-approach-and-its-pros-and-cons/>
+    \bibitem{bruteforce_ref}
+    GeeksforGeeks. "Brute Force Approach and its Pros and Cons." [Online].
+    Available: \url{https://www.geeksforgeeks.org/brute-force-approach-and-its-pros-and-cons/}
 
-@ Backtracking
-<https://en.wikipedia.org/wiki/Backtracking>
-<https://www.geeksforgeeks.org/dsa/backtracking-algorithms/>
+    \bibitem{backtracking_ref}
+    GeeksforGeeks. "Backtracking Algorithms." [Online].
+    Available: \url{https://www.geeksforgeeks.org/backtracking-algorithms/}
 
-@ pyqt 相关
-1. <https://www.riverbankcomputing.com/static/Docs/PyQt6/>
-2. <https://www.runoob.com/python3/python-pyqt.html>
-3. <https://blog.csdn.net/u012117917/article/details/41604711>
-4. <https://zhuanlan.zhihu.com/p/390192953>
+    \bibitem{sudoku_data_ref}
+    Sudoku Name. "Online Sudoku Puzzles." [Online].
+    Available: \url{https://www.sudoku.name/}
 
-@ 
+    \bibitem{pyqt_ref}
+    Riverbank Computing. "PyQt6 Reference Guide." [Online].
+    Available: \url{https://www.riverbankcomputing.com/static/Docs/PyQt6/}
 
-See Resources on \href{https://github.com/ZhangKeqin0307/couresework1.git}{git@github.com:ZhangKeqin0307/couresework1.git}.
-\end{verbatim}
+\end{thebibliography}
 
 \end{document}
