@@ -24,6 +24,9 @@
 
 \usepackage{minted}
 
+\usepackage{booktabs}
+\usepackage{tabularx}
+
 \usepackage{fancyhdr}
 \setlength{\headheight}{15pt}
 \addtolength{\topmargin}{-2.5pt}
@@ -108,7 +111,6 @@
 %----------------------------------------------------------------------------------------
 \subsubsection{Procedure}
 %----------------------------------------------------------------------------------------
-\label{subsection:Procedure}
 A CSP(constraint satisfaction problem) \cite{csp_ref} should involve the following three components: Variables, Domains and Constraints.
 Therefore, we can define the Sudoku problem as follows:
 \[
@@ -311,46 +313,211 @@ self.execution_time = (end_time - self.start_time) * 1000
 \newpage
 
 %----------------------------------------------------------------------------------------
-\subsection{Part 2 - Automated Planning}
+\section{Part 2 - Automated Planning}
 %----------------------------------------------------------------------------------------
-\subsubsection{Part 2A: Modelling the Domain}
+All domains and problems are tested on \textit{PDDL Editor} \cite{pddl_planner}, using the \textbf{BFWS--FF-parser} version.
 %----------------------------------------------------------------------------------------
-\subsubsection{Part 2B: Modelling the Problems}
+\subsection{Part 2A: Modelling the Domain}
 %----------------------------------------------------------------------------------------
-\subsubsection{Part 2C: Extension}
+\subsubsection{Domain 1: Explanation of Predicates and Actions}
 %----------------------------------------------------------------------------------------
-\section{Reflection and Analysis}
+The predicates are categorized by their functionality as shown in the following table:
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{@{}l l X@{}}
+        \toprule
+        \textbf{Category} & \textbf{Predicate} & \textbf{Description} \\
+        \midrule
+        \multirow{3}{*}{\shortstack[l]{Position \&\\Movement}} 
+            & \texttt{(lander-at ?l ?loc)} & Records lander location. \\
+            & \texttt{(at ?r ?loc)} & Indicates rover location. \\
+            & \texttt{(path ?from ?to)} & Defines connectivity between locations. \\
+        \midrule
+        \multirow{3}{*}{\shortstack[l]{Assignment \&\\Deployment}} 
+            & \texttt{(assigned ?r ?l)} & Links a rover to a specific lander. \\
+            & \texttt{(unplaced ?l)} & Lander needs a landing site. \\
+            & \texttt{(deployed ?r)} & Rover status flag. \\
+        \midrule
+        \multirow{5}{*}{Data-related} 
+            & \texttt{(image-target ?i ?l)} & Image task requirement. \\
+            & \texttt{(scan-target ?s ?l)} & Scan task requirement. \\
+            & \texttt{(taken ?d)} & Data has been captured. \\
+            & \texttt{(empty-memory ?r)} & Rover memory availability (1-slot). \\
+            & \texttt{(holding-data ?r ?d)} & Rover currently holds data. \\
+            & \texttt{(transmitted ?d ?l)} & Data sent back to lander. \\
+        \midrule
+        \multirow{4}{*}{Sample-related} 
+            & \texttt{(sample-at ?s ?l)} & Sample availability at location. \\
+            & \texttt{(holding-sample ?r ?s)} & Rover is carrying a sample. \\
+            & \texttt{(sample-picked-up ?s)} & Global flag: sample has been collected. \\
+            & \texttt{(sample-stored ?s)} & Global flag: sample is safely stored. \\
+            & \texttt{(stored ?s ?l)} & Sample stored in lander. \\
+            & \texttt{(lander-free ?l)} & Lander storage availability. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Predicates Definition for Domain 1}
+\end{table}
+
+\subsubsection{Domain 1: Actions Overview}
+The domain defines actions for navigation, data collection, and sample handling:
+\begin{itemize}
+    \item \textbf{Lifecycle}: \texttt{choose-landing}, \texttt{deploy}, \texttt{retrieve}.
+    \item \textbf{Movement}: \texttt{move} (between connected waypoints).
+    \item \textbf{Data Ops}: \texttt{take-image}, \texttt{scan} (require specific location/empty memory), \texttt{transmit}.
+    \item \textbf{Sample Ops}: \texttt{pick-up-sample}, \texttt{store-sample} (requires rover to be retrieved).
+\end{itemize}
 
 %----------------------------------------------------------------------------------------
-\section{Conclusion}
+\subsection{Part 2B: Modelling the Problems}
+%----------------------------------------------------------------------------------------
+\subsubsection{Lunar Mission 1}
+%----------------------------------------------------------------------------------------
+\begin{enumerate}
+    \item \textbf{Initial State}
+    One lander and one rover. Initially, the lander has not yet selected a landing site, the rover is not deployed, the lander’s storage is empty, and the rover’s memory is empty.
+
+    \item \textbf{Objectives}
+    \begin{itemize}
+        \item capture \texttt{image5} at \texttt{wp5},
+        \item perform \texttt{scan3} at \texttt{wp3},
+        \item collect \texttt{sample1} at \texttt{wp1} and deliver it back to the lander.
+    \end{itemize}
+
+    \item \textbf{Planning Note}
+    The plan needs to determine a landing site for the lander, deploy the rover, and navigate the rover through the required locations to complete all objectives using the surface map shown in Figure 2 \cite{report_criteria}.
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+\subsubsection{Lunar Mission 2}
+%----------------------------------------------------------------------------------------
+\begin{enumerate}
+    \item \textbf{Initial State}
+    \begin{itemize}
+        \item \texttt{lander1} is already located at \texttt{wp2}, with \texttt{rover1} deployed at \texttt{wp2}.
+        \item \texttt{lander2} has not yet chosen a landing site, and \texttt{rover2} is not deployed.
+        \item Both landers have empty storage, and both rovers start with empty memory.
+    \end{itemize}
+
+    \item \textbf{Objectives}
+    \begin{itemize}
+        \item capture \texttt{image2} at \texttt{wp2},
+        \item capture \texttt{image3} at \texttt{wp3},
+        \item perform \texttt{scan4} at \texttt{wp4},
+        \item perform \texttt{scan6} at \texttt{wp6},
+        \item collect \texttt{sample1} at \texttt{wp1},
+        \item collect \texttt{sample5} at \texttt{wp5},
+        \item and store all collected samples in a lander.
+    \end{itemize}
+
+    \item \textbf{Planning Note}
+    The plan needs to decide where \texttt{lander2} should land, deploy \texttt{rover2}, and coordinate both rovers to complete all data-gathering and sample-collection tasks based on the map in Figure 3 \cite{report_criteria}.
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+\subsection{Part 2C: Extension}
+%----------------------------------------------------------------------------------------
+\subsubsection{Domain 2: What I Added or Modified}
+%----------------------------------------------------------------------------------------
+Domain 2 is an extension of Domain 1. The scientific part of the model stays the same, but I introduce a human astronaut system and internal lander areas. Below I summarize exactly what I changed.
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{@{}l l X@{}}
+        \toprule
+        \textbf{Category} & \textbf{Element} & \textbf{Description / Modification} \\
+        \midrule
+        \multirow{2}{*}{\textbf{New Types}} 
+            & \texttt{astronaut} & Represents human crew members (e.g., Alice, Bob). \\
+            & \texttt{area} & Represents internal rooms within a lander. \\
+        \midrule
+        \textbf{New Predicate} 
+            & \texttt{(crew-in ?a ?l ?ar)} & Tracks the location of astronaut \texttt{?a} inside lander \texttt{?l} at area \texttt{?ar}. \\
+        \midrule
+        \textbf{New Action} 
+            & \texttt{move-crew} & Allows astronauts to transition between internal areas (e.g., \textit{docking-bay} $\leftrightarrow$ \textit{control-room}). \\
+        \midrule
+        \multirow{4}{*}{\shortstack[l]{\textbf{Modified}\\\textbf{Actions}}} 
+            & \texttt{deploy} & \multirow{3}{=}{Constraint Added: Astronaut must be in the \textbf{docking-bay} to execute these actions.} \\
+            & \texttt{retrieve} & \\
+            & \texttt{store-sample} & \\
+            \cmidrule{2-3}
+            & \texttt{transmit} & Constraint Added: Astronaut must be in the \textbf{control-room} to send data. \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Summary of Extensions and Modifications in Domain 2}
+    \label{tab:domain2_extensions}
+\end{table}
+
+%----------------------------------------------------------------------------------------
+\subsubsection{Lunar Mission 3}
+%----------------------------------------------------------------------------------------
+\begin{enumerate}
+    \item \textbf{Initial State} \\
+    This instance is based on the same terrain as Mission 2 \cite{report_criteria} but includes astronauts and internal lander areas. At the beginning, Alice is in lander1’s docking-bay, and Bob is in lander2’s control-room. 
+    Lander1 remains at \texttt{wp2} with \texttt{rover1} deployed there. 
+    Lander2 is unplaced, and \texttt{rover2} is not deployed. 
+    All storage and memory are initially empty.
+
+    \item \textbf{Objectives} \\
+    The required mission goals are the same as in Mission~2:
+    \begin{itemize}
+        \item photograph \texttt{image2} at \texttt{wp2},
+        \item photograph \texttt{image3} at \texttt{wp3},
+        \item perform \texttt{scan4} at \texttt{wp4},
+        \item perform \texttt{scan6} at \texttt{wp6},
+        \item collect \texttt{sample1} from \texttt{wp1},
+        \item collect \texttt{sample5} from \texttt{wp5},
+        \item and ensure all samples are stored in a lander.
+    \end{itemize}
+
+    \item \textbf{Planning Note} \\
+    In this instance, actions such as deploying rovers, storing samples, or transferring data must be carried out by the astronauts from the correct internal areas, so the plan must also coordinate astronaut movement within the landers.
+\end{enumerate}
+
+\textbf{\textit{Note}}: For the complete video recording, please refer to \href{https://heriotwatt-my.sharepoint.com/:v:/g/personal/yz2135_hw_ac_uk/IQC1OfCjBD4BS43vFo2gdDVOAeDYJkMZha4YHIN50qMwmmw}{Microsoft Team} \cite{video_microsoft_team}.
 
 \newpage
 
 %----------------------------------------------------------------------------------------
 % Reference
 %----------------------------------------------------------------------------------------
-% \phantomsection % 如果引用跳转位置不准，可以取消这行的注释
 \begin{thebibliography}{99}
     \raggedright
     \bibitem{csp_ref}
-    Wikipedia contributors. "Constraint satisfaction problem." Wikipedia, The Free Encyclopedia. [Online].
+    Wikipedia contributors. ``Constraint satisfaction problem.'' Wikipedia, The Free Encyclopedia. [Online].
     Available: \url{https://en.wikipedia.org/wiki/Constraint_satisfaction_problem}
 
     \bibitem{bruteforce_ref}
-    GeeksforGeeks. "Brute Force Approach and its Pros and Cons." [Online].
+    GeeksforGeeks. ``Brute Force Approach and its Pros and Cons.'' [Online].
     Available: \url{https://www.geeksforgeeks.org/brute-force-approach-and-its-pros-and-cons/}
 
     \bibitem{backtracking_ref}
-    GeeksforGeeks. "Backtracking Algorithms." [Online].
+    GeeksforGeeks. ``Backtracking Algorithms.'' [Online].
     Available: \url{https://www.geeksforgeeks.org/backtracking-algorithms/}
 
     \bibitem{sudoku_data_ref}
-    Sudoku Name. "Online Sudoku Puzzles." [Online].
+    Sudoku Name. ``Online Sudoku Puzzles.'' [Online].
     Available: \url{https://www.sudoku.name/}
 
     \bibitem{pyqt_ref}
-    Riverbank Computing. "PyQt6 Reference Guide." [Online].
+    Riverbank Computing. ``PyQt6 Reference Guide.'' [Online].
     Available: \url{https://www.riverbankcomputing.com/static/Docs/PyQt6/}
+
+    \bibitem{pddl_planner}
+    PDDL Editor. ``Online PDDL Editor.'' [Online].
+    Available: \url{https://editor.planning.domains}
+
+    \bibitem{report_criteria}
+    F29AI - Artificial Intelligence and Intelligent Agents. ``Heriot-Watt Report Criteria.'' [Online].
+    Available: \url{https://github.com/ZhangKeqin0307/couresework1/blob/main/doc/F29AI_CW1_2025_en.pdf}
+
+    \bibitem{video_microsoft_team}
+    Mircrosoft Team. ``Video on the drive.'' [Online].
+    Availeable: \url{https://heriotwatt-my.sharepoint.com/:v:/g/personal/yz2135_hw_ac_uk/IQC1OfCjBD4BS43vFo2gdDVOAeDYJkMZha4YHIN50qMwmmw}
 
 \end{thebibliography}
 
