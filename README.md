@@ -25,8 +25,20 @@ This repository involves the *report*, *code* and other correspoding files of th
 │   └── utils.py                # Cross Tools
 │
 └── Part2/
+    ├── PartA&B/                # Modeling the domain and problems
+    │   ├── domain1.pddl
+    │   ├── mission1.pddl
+    │   └── mission2.pddl
+    └── PartC/                  # Extension
+        ├── domain2.pddl
+        └── mission3.pddl
 
 </code></pre>
+
+---
+
+### Note
+For the complete video recording, please refer to [Microsoft Team](https://heriotwatt-my.sharepoint.com/:v:/g/personal/yz2135_hw_ac_uk/IQC1OfCjBD4BS43vFo2gdDVOAeDYJkMZha4YHIN50qMwmmw).
 
 ---
 
