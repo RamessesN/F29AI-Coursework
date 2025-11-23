@@ -321,42 +321,44 @@ All domains and problems are tested on \textit{PDDL Editor} \cite{pddl_planner},
 %----------------------------------------------------------------------------------------
 \subsubsection{Domain 1: Explanation of Predicates and Actions}
 %----------------------------------------------------------------------------------------
-The predicates used in the PDDL model are categorized by their functionality as shown in Table~\ref{tab:predicates}.
+The predicates are categorized by their functionality as shown in the following table:
 
 \begin{table}[H]
     \centering
     \small
     \renewcommand{\arraystretch}{1.2}
-    \begin{tabularx}{\textwidth}{@{}l l X@{}} % 使用 tabularx 自动折行
+    \begin{tabularx}{\textwidth}{@{}l l X@{}}
         \toprule
         \textbf{Category} & \textbf{Predicate} & \textbf{Description} \\
         \midrule
-        \multirow{3}{*}{\shortstack[l]{Pos. \&\\Movement}} 
+        \multirow{3}{*}{\shortstack[l]{Position \&\\Movement}} 
             & \texttt{(lander-at ?l ?loc)} & Records lander location. \\
             & \texttt{(at ?r ?loc)} & Indicates rover location. \\
             & \texttt{(path ?from ?to)} & Defines connectivity between locations. \\
         \midrule
-        \multirow{3}{*}{\shortstack[l]{Assign. \&\\Deploy}} 
+        \multirow{3}{*}{\shortstack[l]{Assignment \&\\Deployment}} 
             & \texttt{(assigned ?r ?l)} & Links a rover to a specific lander. \\
             & \texttt{(unplaced ?l)} & Lander needs a landing site. \\
             & \texttt{(deployed ?r)} & Rover status flag. \\
         \midrule
-        \multirow{5}{*}{Data} 
+        \multirow{5}{*}{Data-related} 
             & \texttt{(image-target ?i ?l)} & Image task requirement. \\
             & \texttt{(scan-target ?s ?l)} & Scan task requirement. \\
             & \texttt{(taken ?d)} & Data has been captured. \\
             & \texttt{(empty-memory ?r)} & Rover memory availability (1-slot). \\
+            & \texttt{(holding-data ?r ?d)} & Rover currently holds data. \\
             & \texttt{(transmitted ?d ?l)} & Data sent back to lander. \\
         \midrule
-        \multirow{4}{*}{Sample} 
+        \multirow{4}{*}{Sample-related} 
             & \texttt{(sample-at ?s ?l)} & Sample availability at location. \\
             & \texttt{(holding-sample ?r ?s)} & Rover is carrying a sample. \\
+            & \texttt{(sample-picked-up ?s)} & Global flag: sample has been collected. \\
+            & \texttt{(sample-stored ?s)} & Global flag: sample is safely stored. \\
             & \texttt{(stored ?s ?l)} & Sample stored in lander. \\
             & \texttt{(lander-free ?l)} & Lander storage availability. \\
         \bottomrule
     \end{tabularx}
     \caption{Predicates Definition for Domain 1}
-    \label{tab:predicates}
 \end{table}
 
 \subsubsection{Domain 1: Actions Overview}
@@ -454,13 +456,13 @@ Domain 2 is an extension of Domain 1. The scientific part of the model stays the
 \subsubsection{Lunar Mission 3}
 %----------------------------------------------------------------------------------------
 \begin{enumerate}
-    \item \textbf{Initial State}
+    \item \textbf{Initial State} \\
     This instance is based on the same terrain as Mission 2 \cite{report_criteria} but includes astronauts and internal lander areas. At the beginning, Alice is in lander1’s docking-bay, and Bob is in lander2’s control-room. 
     Lander1 remains at \texttt{wp2} with \texttt{rover1} deployed there. 
     Lander2 is unplaced, and \texttt{rover2} is not deployed. 
     All storage and memory are initially empty.
 
-    \item \textbf{Objectives}
+    \item \textbf{Objectives} \\
     The required mission goals are the same as in Mission~2:
     \begin{itemize}
         \item photograph \texttt{image2} at \texttt{wp2},
@@ -472,18 +474,17 @@ Domain 2 is an extension of Domain 1. The scientific part of the model stays the
         \item and ensure all samples are stored in a lander.
     \end{itemize}
 
-    \item \textbf{Planning Note}
+    \item \textbf{Planning Note} \\
     In this instance, actions such as deploying rovers, storing samples, or transferring data must be carried out by the astronauts from the correct internal areas, so the plan must also coordinate astronaut movement within the landers.
 \end{enumerate}
 
-\textbf{\textit{Note}}: For the complete video recording, please refer to \href{https://heriotwatt-my.sharepoint.com/:v:/g/personal/yz2135_hw_ac_uk/IQC1OfCjBD4BS43vFo2gdDVOAeDYJkMZha4YHIN50qMwmmw}{Microsoft Team}.
+\textbf{\textit{Note}}: For the complete video recording, please refer to \href{https://heriotwatt-my.sharepoint.com/:v:/g/personal/yz2135_hw_ac_uk/IQC1OfCjBD4BS43vFo2gdDVOAeDYJkMZha4YHIN50qMwmmw}{Microsoft Team} \cite{video_microsoft_team}.
 
 \newpage
 
 %----------------------------------------------------------------------------------------
 % Reference
 %----------------------------------------------------------------------------------------
-% \phantomsection % 如果引用跳转位置不准，可以取消这行的注释
 \begin{thebibliography}{99}
     \raggedright
     \bibitem{csp_ref}
@@ -511,8 +512,13 @@ Domain 2 is an extension of Domain 1. The scientific part of the model stays the
     Available: \url{https://editor.planning.domains}
 
     \bibitem{report_criteria}
-    F29AI - Artificial Intelligence and Intelligent Agents. ``Heriot-Watt Report Criteria'' [Offline].
+    F29AI - Artificial Intelligence and Intelligent Agents. ``Heriot-Watt Report Criteria.'' [Online].
     Available: \url{https://github.com/ZhangKeqin0307/couresework1/blob/main/doc/F29AI_CW1_2025_en.pdf}
+
+    \bibitem{video_microsoft_team}
+    Mircrosoft Team. ``Video on the drive.'' [Online].
+    Availeable: \url{https://heriotwatt-my.sharepoint.com/:v:/g/personal/yz2135_hw_ac_uk/IQC1OfCjBD4BS43vFo2gdDVOAeDYJkMZha4YHIN50qMwmmw}
+
 \end{thebibliography}
 
 \end{document}
